@@ -21,20 +21,20 @@ set(
 
 set(
 	debug_sources
-		#src/DebugDraw.h
-		#src/DebugDraw.cpp
+		src/DebugDraw.h
+		src/DebugDraw.cpp
 )
 
 add_executable(
 	Bustout
 		${main_sources}
-		#${debug_sources}
+		$<$<CONFIG:Debug>:${debug_sources}>
 )
 
 set_target_properties(Bustout PROPERTIES CXX_STANDARD 17)
 
 source_group(main FILES ${main_sources})
-#source_group(debug FILES ${debug_sources})
+source_group(debug FILES $<$<CONFIG:Debug>:${debug_sources}>)
 
 macro(add_sfml_dependency my_target sfml_target)
 	add_custom_command(

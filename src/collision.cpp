@@ -21,9 +21,9 @@ namespace bustout
 		const float paddleLength = length(paddleVector);
 		const float ballLength = length(ballVector);
 
-		const float overlap = clamp(dot(paddleVector, ballVector) / paddleLength, 0.0f, paddleLength);
+		const float overlap = clamp(dot(paddleVector, ballVector) * (1 / paddleLength), 0.0f, paddleLength);
 
-		const auto point = overlap * (paddleVector * 1 / paddleLength);
+		const auto point = overlap * (paddleVector * (1 / paddleLength));
 
 		const float d2 = length2(ballVector - point);
 
