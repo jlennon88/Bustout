@@ -86,8 +86,14 @@ namespace bustout
 		return dot(u, v) > 0;
 	}
 
-	inline float length2(const const sf::Vector2f&& v) noexcept
+	// returns the squared length of the provided vector
+	inline float length2(const sf::Vector2f& v) noexcept
 	{
 		return dot(v, v);
+	}
+
+	inline float length(const sf::Vector2f& v) noexcept
+	{
+		return std::sqrt(length2(v));
 	}
 }

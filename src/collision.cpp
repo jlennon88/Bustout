@@ -13,9 +13,26 @@ namespace bustout
 		return sr2 > d2;
 	}
 
-	bool testCollision_BallPaddle(const Ball& ball, const Paddle& paddle) noexcept
+	std::optional<sf::Vector2f> testCollision_BallPaddle(const Ball& ball, const Paddle& paddle) noexcept
 	{
-		return false;
+		const auto paddleVector = paddle.pointB - paddle.pointA;
+		const auto ballVector = ball.position - paddle.pointA;
+
+		const float paddleLength = length(paddleVector);
+		const float ballLength = length(ballVector);
+
+		const float overlap = clamp(dot(paddleVector, ballVector) / paddleLength, 0.0f, paddleLength);
+
+		const auto point = overlap * (paddleVector * 1 / paddleLength);
+
+		const float d2 = length2(ballVector - point);
+
+		const float radSum = ball.radius + paddle.radius;
+		const float radSum2 = radSum * radSum;
+		if (radSum2 > d2)
+			return { point + paddle.pointA };
+		else
+			return {};
 	}
 
 	bool testCollision_BallBlock(const Ball& ball, const Block& block) noexcept
