@@ -8,6 +8,8 @@ set(
 	main_sources
 		src/main.cpp
 		
+		src/maths.h
+		
 		src/Ball.h
 		src/Paddle.h
 		src/BlockGrid.h
@@ -17,11 +19,11 @@ set(
 		src/collision.cpp
 )
 
-#set(
-#	debug_sources
-#		src/DebugDraw.h
-#		src/DebugDraw.cpp
-#)
+set(
+	debug_sources
+		#src/DebugDraw.h
+		#src/DebugDraw.cpp
+)
 
 add_executable(
 	Bustout

@@ -2,7 +2,10 @@
 
 #include <SFML/System.hpp>
 
-struct PowerUp
+namespace bustout
 {
-	sf::Vector2f position;
-};
+	struct PowerUp
+	{
+		sf::Vector2f position;
+	};
+}

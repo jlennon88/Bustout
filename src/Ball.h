@@ -2,9 +2,12 @@
 
 #include <SFML/System.hpp>
 
-struct Ball
+namespace bustout
 {
-	sf::Vector2f position;
-	sf::Vector2f velocity;
-	float radius;
-};
+	struct Ball
+	{
+		sf::Vector2f position;
+		sf::Vector2f velocity;
+		float radius;
+	};
+}
