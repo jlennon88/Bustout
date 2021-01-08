@@ -1,5 +1,7 @@
 #include <SFML/Graphics.hpp>
 
+#include "DebugDraw.h"
+
 constexpr int MainWindowWidth = 800;
 constexpr int MainWindowHeight = 600;
 
@@ -18,6 +20,12 @@ int main()
 		}
 	);
 
+	bustout::Ball ball;
+	ball.radius = 20.0f;
+	ball.position = { 0.0f, 0.0f };
+	ball.velocity = { 0.0f, 0.0f };
+	bustout::DebugRenderer::get().registerObject(ball);
+
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
 	bool shouldClose = false;
@@ -32,19 +40,20 @@ int main()
 
 		window.clear(clearColor);
 
-
 		// draw scene
 		window.setView(worldView);
-		
-		
+
 		// draw ui
 		window.setView(uiView);
 
-		
 		const auto mousePos = sf::Mouse::getPosition(window);
+		ball.position = { (float)mousePos.x, (float)mousePos.y };
+		bustout::DebugRenderer::get().draw(window);
 		
 		window.display();
 	}
+
+	bustout::DebugRenderer::get().removeObject(ball);
 
 	return 0;
 }

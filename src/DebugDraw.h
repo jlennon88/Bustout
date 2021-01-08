@@ -23,10 +23,10 @@ namespace bustout
 		>;
 
 		template<typename T>
-		void registerObject(const T& object) noexcept;
+		void registerObject(const T& object);
 
 		template<typename T>
-		void removeObject(const T& object) noexcept;
+		void removeObject(const T& object);
 
 		void draw(sf::RenderWindow& window) const;
 

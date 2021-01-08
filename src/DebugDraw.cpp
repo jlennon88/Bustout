@@ -11,17 +11,17 @@ namespace bustout
 	}
 
 	template<typename T>
-	void DebugRenderer::registerObject(const T& object) noexcept
+	void DebugRenderer::registerObject(const T& object)
 	{
-		auto& objectVector = selectVector<T>();
+		auto& objectVector = selectVector<T>(m_objects);
 		if (std::find(std::begin(objectVector), std::end(objectVector), &object) == std::end(objectVector))
 			objectVector.push_back(&object);
 	}
 
 	template<typename T>
-	void DebugRenderer::removeObject(const T& object) noexcept
+	void DebugRenderer::removeObject(const T& object)
 	{
-		auto& objectVector = selectVector<T>();
+		auto& objectVector = selectVector<T>(m_objects);
 		auto pos = std::find(std::begin(objectVector), std::end(objectVector), &object);
 		if (pos != std::end(objectVector))
 			objectVector.erase(pos);
@@ -42,6 +42,7 @@ namespace bustout
 		{
 			circle.setPosition(ball->position);
 			circle.setOrigin({ ball->radius, ball->radius });
+			circle.setRadius(ball->radius);
 			window.draw(circle);
 		}
 	}
@@ -67,6 +68,7 @@ namespace bustout
 		{
 			// draw end points
 			circle.setOrigin({ paddle->radius, paddle->radius });
+			circle.setRadius(paddle->radius);
 			circle.setPosition(paddle->pointA);
 			window.draw(circle);
 			circle.setPosition(paddle->pointB);
@@ -84,14 +86,22 @@ namespace bustout
 		}
 	}
 
-	inline static void renderObjects(sf::RenderWindow& window, const std::vector<BlockGrid>& blockGrids)
+	inline static void renderObjects(
+		  sf::RenderWindow& window
+		, const std::vector<const BlockGrid*>& blockGrids
+		, const sf::Color& fillColour
+		, const sf::Color& outlineColour
+	)
 	{
-
 	}
 
-	inline static void renderObjects(sf::RenderWindow& window, const std::vector<PowerUp>& powerUps)
+	inline static void renderObjects(
+		  sf::RenderWindow& window
+		, const std::vector<const PowerUp*>& powerUps
+		, const sf::Color& fillColour
+		, const sf::Color& outlineColour
+	)
 	{
-
 	}
 
 	template<int IDX>
@@ -126,19 +136,29 @@ namespace bustout
 		drawObjectCollection<IDX0>(window, m_objects, m_fillColor, m_outlineColour);
 	}
 
+	void DebugRenderer::setOutlineColour(sf::Color colour) noexcept
+	{
+		m_outlineColour = colour;
+	}
+
+	void DebugRenderer::setFillColour(sf::Color colour) noexcept
+	{
+		m_fillColor = colour;
+	}
+
 	DebugRenderer& DebugRenderer::get() noexcept
 	{
 		static DebugRenderer inst;
 		return inst;
 	}
 
-	template<> void DebugRenderer::registerObject<Ball>(const Ball& object) noexcept;
-	template<> void DebugRenderer::registerObject<Paddle>(const Paddle& object) noexcept;
-	template<> void DebugRenderer::registerObject<BlockGrid>(const BlockGrid& object) noexcept;
-	template<> void DebugRenderer::registerObject<PowerUp>(const PowerUp& object) noexcept;
+	template void DebugRenderer::registerObject(const Ball& object);
+	template void DebugRenderer::registerObject(const Paddle& object);
+	template void DebugRenderer::registerObject(const BlockGrid& object);
+	template void DebugRenderer::registerObject(const PowerUp& object);
 
-	template<> void DebugRenderer::removeObject<Ball>(const Ball& object) noexcept;
-	template<> void DebugRenderer::removeObject<Paddle>(const Paddle& object) noexcept;
-	template<> void DebugRenderer::removeObject<BlockGrid>(const BlockGrid& object) noexcept;
-	template<> void DebugRenderer::removeObject<PowerUp>(const PowerUp& object) noexcept;
+	template void DebugRenderer::removeObject(const Ball& object);
+	template void DebugRenderer::removeObject(const Paddle& object);
+	template void DebugRenderer::removeObject(const BlockGrid& object);
+	template void DebugRenderer::removeObject(const PowerUp& object);
 }
