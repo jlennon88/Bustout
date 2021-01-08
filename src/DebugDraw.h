@@ -37,7 +37,7 @@ namespace bustout
 	private:
 		DebugRenderer() = default;
 
-		sf::Color m_outlineColour{ 0x33, 0x33, 0x33, 0xFF };
+		sf::Color m_outlineColour{};// { 0x33, 0x33, 0x33, 0xFF };
 		sf::Color m_fillColor = { 0, 0, 0, 0 };
 
 		ObjectCollectionSet m_objects{};

@@ -105,4 +105,9 @@ namespace bustout
 	{
 		return std::sqrt(length2(v));
 	}
+
+	inline sf::Vector2f normalise(const sf::Vector2f& v) noexcept
+	{
+		return v * (1 / length(v));
+	}
 }

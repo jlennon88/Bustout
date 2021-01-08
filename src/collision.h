@@ -14,7 +14,7 @@ namespace bustout
 		, const Ball& ballB
 	) noexcept;
 
-	// returns the contact point on the paddle if there is a collision
+	// returns the nearest point on the paddle axis if there is a collision
 	std::optional<sf::Vector2f> testCollision_BallPaddle(
 		  const Ball& ball
 		, const Paddle& paddle

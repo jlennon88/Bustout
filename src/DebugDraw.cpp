@@ -35,9 +35,10 @@ namespace bustout
 	)
 	{
 		sf::CircleShape circle;
-		circle.setOutlineThickness(-2.0f);
+		circle.setOutlineThickness(-0.005f);
 		circle.setFillColor(fillColour);
 		circle.setOutlineColor(outlineColour);
+
 		for (const auto ball : balls)
 		{
 			circle.setPosition(ball->position);
@@ -55,12 +56,12 @@ namespace bustout
 	)
 	{
 		sf::CircleShape circle;
-		circle.setOutlineThickness(-2.0f);
+		circle.setOutlineThickness(-0.005f);
 		circle.setFillColor(fillColour);
 		circle.setOutlineColor(outlineColour);
 
 		sf::RectangleShape rectangle;
-		rectangle.setOutlineThickness(-2.0f);
+		rectangle.setOutlineThickness(-0.005f);
 		rectangle.setFillColor(fillColour);
 		rectangle.setOutlineColor(outlineColour);
 
@@ -79,6 +80,7 @@ namespace bustout
 
 			const auto lengthVector = paddle->pointB - paddle->pointA;
 			rectangle.setSize({ length(lengthVector), 2 * paddle->radius });
+			rectangle.setOrigin({ 0.5f * lengthVector.x, paddle->radius });
 			// - rotation relative to x-axis
 			const float angle = std::atan2(lengthVector.y, lengthVector.x);
 			rectangle.setRotation(to_degrees(angle));

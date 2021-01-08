@@ -2,29 +2,38 @@
 
 #include "DebugDraw.h"
 
+#include "collision.h"
+#include "maths.h"
+
+#include <iostream>
+
 constexpr int MainWindowWidth = 800;
 constexpr int MainWindowHeight = 600;
+
+const static sf::Vector2f SpaceScale = { 2 , -2 * (float)MainWindowHeight / (float)MainWindowWidth };
 
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(MainWindowWidth, MainWindowHeight), "Bustout");
 	window.setVerticalSyncEnabled(true);
+	window.setMouseCursorVisible(false);
 
 	sf::View uiView = window.getView();
 	sf::View worldView = window.getView();
 	worldView.setCenter(0.0f, 0.0f);
-	worldView.setSize(
-		{
-			 static_cast<float>(MainWindowWidth),
-			-static_cast<float>(MainWindowHeight),
-		}
-	);
+	worldView.setSize(SpaceScale);
 
 	bustout::Ball ball;
-	ball.radius = 20.0f;
 	ball.position = { 0.0f, 0.0f };
 	ball.velocity = { 0.0f, 0.0f };
+	ball.radius = 0.02f;
 	bustout::DebugRenderer::get().registerObject(ball);
+
+	bustout::Paddle paddle;
+	paddle.pointA = { -0.075f, -0.5f };
+	paddle.pointB = {  0.075f, -0.5f };
+	paddle.radius = 0.02f;
+	bustout::DebugRenderer::get().registerObject(paddle);
 
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
@@ -43,17 +52,47 @@ int main()
 		// draw scene
 		window.setView(worldView);
 
+		const auto mousePos = sf::Mouse::getPosition(window);
+		ball.position = { ((float)mousePos.x - 0.5f * (float)MainWindowWidth) * (SpaceScale.x / (float)MainWindowWidth), ((float)mousePos.y - 0.5f * (float)MainWindowHeight) * (SpaceScale.y / (float)MainWindowHeight) };
+		const auto collisionData = bustout::testCollision_BallPaddle(ball, paddle);
+		if (collisionData.has_value())
+		{
+			bustout::DebugRenderer::get().setOutlineColour({ 0xFF, 0x00, 0x00, 0xFF });
+
+			sf::Vertex linePoints[2] = {
+				{ collisionData.value(), sf::Color::White, {} },
+				{ ball.position, sf::Color::White, {} },
+			};
+
+			window.draw(linePoints, 2, sf::PrimitiveType::Lines);
+
+			const auto contactPoint = paddle.radius * bustout::normalise(ball.position - collisionData.value()) + collisionData.value();
+
+			bustout::DebugRenderer::get().draw(window);
+
+			sf::CircleShape dot;
+			dot.setRadius(0.005f);
+			dot.setFillColor(sf::Color::White);
+			dot.setOutlineColor({});
+			dot.setPosition(contactPoint);
+			dot.setOrigin({ 0.005f, 0.005f });
+			window.draw(dot);
+		}
+		else
+		{
+			bustout::DebugRenderer::get().setOutlineColour({ 0x00, 0xFF, 0x00, 0xFF });
+
+			bustout::DebugRenderer::get().draw(window);
+		}
+
 		// draw ui
 		window.setView(uiView);
-
-		const auto mousePos = sf::Mouse::getPosition(window);
-		ball.position = { (float)mousePos.x, (float)mousePos.y };
-		bustout::DebugRenderer::get().draw(window);
 		
 		window.display();
 	}
 
 	bustout::DebugRenderer::get().removeObject(ball);
+	bustout::DebugRenderer::get().removeObject(paddle);
 
 	return 0;
 }
