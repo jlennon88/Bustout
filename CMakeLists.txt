@@ -7,24 +7,32 @@ add_subdirectory(vendor)
 set(
 	main_sources
 		src/main.cpp
+		
+		src/Ball.h
+		src/Paddle.h
+		src/BlockGrid.h
+		src/BlockGrid.cpp
+		src/PowerUp.h
+		src/collision.h
+		src/collision.cpp
 )
 
-set(
-	debug_sources
-		src/DebugDraw.h
-		src/DebugDraw.cpp
-)
+#set(
+#	debug_sources
+#		src/DebugDraw.h
+#		src/DebugDraw.cpp
+#)
 
 add_executable(
 	Bustout
 		${main_sources}
-		${debug_sources}
+		#${debug_sources}
 )
 
 set_target_properties(Bustout PROPERTIES CXX_STANDARD 17)
 
 source_group(main FILES ${main_sources})
-source_group(debug FILES ${debug_sources})
+#source_group(debug FILES ${debug_sources})
 
 macro(add_sfml_dependency my_target sfml_target)
 	add_custom_command(
@@ -45,12 +53,6 @@ endmacro()
 add_sfml_dependency(Bustout sfml-graphics)
 add_sfml_dependency(Bustout sfml-window)
 add_sfml_dependency(Bustout sfml-system)
-
-target_link_libraries(
-	Bustout
-		PRIVATE
-			box2d
-)
 
 target_compile_definitions(Bustout PRIVATE ASSET_DIR="${CMAKE_SOURCE_DIR}/assets")
 
