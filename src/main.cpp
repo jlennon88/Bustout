@@ -4,6 +4,7 @@
 
 #include "collision.h"
 #include "maths.h"
+#include "Sprite.h"
 
 #include <iostream>
 
@@ -29,6 +30,7 @@ int main()
 	ball.radius = 0.02f;
 	bustout::DebugRenderer::get().registerObject(ball);
 
+	const float paddleSpeed = 0.5f;
 	bustout::Paddle paddle;
 	paddle.pointA = { -0.075f, -0.5f };
 	paddle.pointB = {  0.075f, -0.5f };
@@ -36,6 +38,10 @@ int main()
 	bustout::DebugRenderer::get().registerObject(paddle);
 
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
+
+	bustout::Sprite paddleSprite("paddle_beam.png");
+	paddleSprite.setTextureRect({ 0, 0, 128, 24 });
+	paddleSprite.setScale({ 0.15f / 128.0f, 0.15f / 128.0f });
 
 	bool shouldClose = false;
 	while (!shouldClose)
@@ -84,6 +90,22 @@ int main()
 
 			bustout::DebugRenderer::get().draw(window);
 		}
+
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+		{
+			paddle.pointA.x -= paddleSpeed * (1 / 75.0f);
+			paddle.pointB.x -= paddleSpeed * (1 / 75.0f);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+		{
+			paddle.pointA.x += paddleSpeed * (1 / 75.0f);
+			paddle.pointB.x += paddleSpeed * (1 / 75.0f);
+		}
+		const float paddleLength = bustout::length(paddle.pointB - paddle.pointA);
+		paddle.pointA.x = bustout::clamp(paddle.pointA.x, -1.0f + paddle.radius, 1.0f - paddle.radius - paddleLength);
+		paddle.pointB.x = bustout::clamp(paddle.pointB.x, -1.0f + paddle.radius + paddleLength, 1.0f - paddle.radius);
+
+		paddleSprite.draw(window, 0.5f * (paddle.pointB + paddle.pointA));
 
 		// draw ui
 		window.setView(uiView);

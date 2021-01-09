@@ -20,6 +20,12 @@ set(
 )
 
 set(
+	gfx_sources
+		src/Sprite.h
+		src/Sprite.cpp
+)
+
+set(
 	debug_sources
 		src/DebugDraw.h
 		src/DebugDraw.cpp
@@ -28,12 +34,14 @@ set(
 add_executable(
 	Bustout
 		${main_sources}
+		${gfx_sources}
 		$<$<CONFIG:Debug>:${debug_sources}>
 )
 
 set_target_properties(Bustout PROPERTIES CXX_STANDARD 17)
 
 source_group(main FILES ${main_sources})
+source_group(gfx FILES ${gfx_sources})
 source_group(debug FILES $<$<CONFIG:Debug>:${debug_sources}>)
 
 macro(add_sfml_dependency my_target sfml_target)
