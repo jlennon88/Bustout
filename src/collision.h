@@ -1,32 +1,29 @@
 #pragma once
 
-#include "Ball.h"
-#include "Paddle.h"
-#include "Block.h"
-#include "PowerUp.h"
+#include "Shapes.h"
 
 #include <optional>
 
 namespace bustout
 {
-	bool testCollision_BallBall(
-		  const Ball& ballA
-		, const Ball& ballB
+	bool testCollision_CircleCircle(
+		  const Circle& circleA
+		, const Circle& circleB
 	) noexcept;
 
 	// returns the nearest point on the paddle axis if there is a collision
-	std::optional<sf::Vector2f> testCollision_BallPaddle(
-		  const Ball& ball
-		, const Paddle& paddle
+	std::optional<sf::Vector2f> testCollision_CircleCapsule(
+		  const Circle& circle
+		, const Capsule& capsule
 	) noexcept;
 
-	bool testCollision_BallBlock(
-		  const Ball& ball
-		, const Block& block
+	bool testCollision_CircleRect(
+		  const Circle & circle
+		, const Rectangle & rect
 	) noexcept;
 
-	bool testCollision_PaddlePowerUp(
-		  const Paddle& paddle
-		, const PowerUp& powerUp
+	bool testCollision_CapsuleRect(
+		  const Capsule& capsule
+		, const Rectangle& rect
 	) noexcept;
 }

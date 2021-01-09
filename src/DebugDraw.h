@@ -16,10 +16,9 @@ namespace bustout
 	{
 	public:
 		using ObjectCollectionSet = std::tuple<
-			  std::vector<const Ball*>
-			, std::vector<const Paddle*>
-			, std::vector<const BlockGrid*>
-			, std::vector<const PowerUp*>
+			  std::vector<const Circle*>
+			, std::vector<const Capsule*>
+			, std::vector<const Rectangle*>
 		>;
 
 		template<typename T>

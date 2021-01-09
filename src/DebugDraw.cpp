@@ -29,7 +29,7 @@ namespace bustout
 
 	inline static void renderObjects(
 		  sf::RenderWindow& window
-		, const std::vector<const Ball*>& balls
+		, const std::vector<const Circle*>& circles
 		, const sf::Color& fillColour
 		, const sf::Color& outlineColour
 	)
@@ -39,18 +39,18 @@ namespace bustout
 		circle.setFillColor(fillColour);
 		circle.setOutlineColor(outlineColour);
 
-		for (const auto ball : balls)
+		for (const auto c : circles)
 		{
-			circle.setPosition(ball->position);
-			circle.setOrigin({ ball->radius, ball->radius });
-			circle.setRadius(ball->radius);
+			circle.setPosition(c->position);
+			circle.setOrigin({ c->radius, c->radius });
+			circle.setRadius(c->radius);
 			window.draw(circle);
 		}
 	}
 
 	inline static void renderObjects(
 		  sf::RenderWindow& window
-		, const std::vector<const Paddle*>& paddles
+		, const std::vector<const Capsule*>& capsules
 		, const sf::Color& fillColour
 		, const sf::Color& outlineColour
 	)
@@ -65,41 +65,28 @@ namespace bustout
 		rectangle.setFillColor(fillColour);
 		rectangle.setOutlineColor(outlineColour);
 
-		for (const auto paddle : paddles)
+		for (const auto capsule : capsules)
 		{
 			// draw end points
-			circle.setOrigin({ paddle->radius, paddle->radius });
-			circle.setRadius(paddle->radius);
-			circle.setPosition(paddle->pointA);
+			circle.setOrigin({ capsule->radius, capsule->radius });
+			circle.setRadius(capsule->radius);
+			circle.setPosition(capsule->position - sf::Vector2f(-capsule->halfLength, 0.0f));
 			window.draw(circle);
-			circle.setPosition(paddle->pointB);
+			circle.setPosition(capsule->position + sf::Vector2f(-capsule->halfLength, 0.0f));
 			window.draw(circle);
 			
 			// draw body
-			rectangle.setPosition(0.5f * (paddle->pointA + paddle->pointB));
+			rectangle.setPosition(capsule->position);
 
-			const auto lengthVector = paddle->pointB - paddle->pointA;
-			rectangle.setSize({ length(lengthVector), 2 * paddle->radius });
-			rectangle.setOrigin({ 0.5f * lengthVector.x, paddle->radius });
-			// - rotation relative to x-axis
-			const float angle = std::atan2(lengthVector.y, lengthVector.x);
-			rectangle.setRotation(to_degrees(angle));
+			rectangle.setSize({ 2 * capsule->halfLength, 2 * capsule->radius });
+			rectangle.setOrigin({ capsule->halfLength, capsule->radius });
 			window.draw(rectangle);
 		}
 	}
 
 	inline static void renderObjects(
 		  sf::RenderWindow& window
-		, const std::vector<const BlockGrid*>& blockGrids
-		, const sf::Color& fillColour
-		, const sf::Color& outlineColour
-	)
-	{
-	}
-
-	inline static void renderObjects(
-		  sf::RenderWindow& window
-		, const std::vector<const PowerUp*>& powerUps
+		, const std::vector<const Rectangle*>& rects
 		, const sf::Color& fillColour
 		, const sf::Color& outlineColour
 	)
@@ -154,13 +141,11 @@ namespace bustout
 		return inst;
 	}
 
-	template void DebugRenderer::registerObject(const Ball& object);
-	template void DebugRenderer::registerObject(const Paddle& object);
-	template void DebugRenderer::registerObject(const BlockGrid& object);
-	template void DebugRenderer::registerObject(const PowerUp& object);
+	template void DebugRenderer::registerObject(const Circle& object);
+	template void DebugRenderer::registerObject(const Capsule& object);
+	template void DebugRenderer::registerObject(const Rectangle& object);
 
-	template void DebugRenderer::removeObject(const Ball& object);
-	template void DebugRenderer::removeObject(const Paddle& object);
-	template void DebugRenderer::removeObject(const BlockGrid& object);
-	template void DebugRenderer::removeObject(const PowerUp& object);
+	template void DebugRenderer::removeObject(const Circle& object);
+	template void DebugRenderer::removeObject(const Capsule& object);
+	template void DebugRenderer::removeObject(const Rectangle& object);
 }

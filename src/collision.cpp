@@ -4,43 +4,57 @@
 
 namespace bustout
 {
-	bool testCollision_BallBall(const Ball& ballA, const Ball& ballB) noexcept
+	bool testCollision_CircleCircle(
+		  const Circle& circleA
+		, const Circle& circleB
+	) noexcept
 	{
-		const auto delta = ballA.position - ballB.position;
+		const auto delta = circleA.position - circleB.position;
 		const float d2 = dot(delta, delta);
-		const float sr = ballA.radius + ballB.radius;
+		const float sr = circleA.radius + circleB.radius;
 		const float sr2 = sr * sr;
 		return sr2 > d2;
 	}
 
-	std::optional<sf::Vector2f> testCollision_BallPaddle(const Ball& ball, const Paddle& paddle) noexcept
+	std::optional<sf::Vector2f> testCollision_CircleCapsule(
+		  const Circle& circle
+		, const Capsule& capsule
+	) noexcept
 	{
-		const auto paddleVector = paddle.pointB - paddle.pointA;
-		const auto ballVector = ball.position - paddle.pointA;
+		const auto capsulePointA = capsule.position - sf::Vector2f(capsule.halfLength, 0.0f);
+		const auto capsuleVector = sf::Vector2f(2 * capsule.halfLength, 0.0f);
+		const auto circleVector = circle.position - capsulePointA;
 
-		const float paddleLength = length(paddleVector);
-		const float ballLength = length(ballVector);
+		const float capsuleLength = length(capsuleVector);
+		const float circleLength = length(circleVector);
 
-		const float overlap = clamp(dot(paddleVector, ballVector) * (1 / paddleLength), 0.0f, paddleLength);
+		const float overlap = clamp(dot(capsuleVector, circleVector) * (1 / capsuleLength), 0.0f, capsuleLength);
 
-		const auto point = overlap * (paddleVector * (1 / paddleLength));
+		const auto point = overlap * (capsuleVector * (1 / capsuleLength));
 
-		const float d2 = length2(ballVector - point);
+		const float d2 = length2(circleVector - point);
 
-		const float radSum = ball.radius + paddle.radius;
+		const float radSum = circle.radius + capsule.radius;
 		const float radSum2 = radSum * radSum;
 		if (radSum2 > d2)
-			return { point + paddle.pointA };
+			return { point + capsulePointA };
 		else
 			return {};
 	}
 
-	bool testCollision_BallBlock(const Ball& ball, const Block& block) noexcept
+	bool testCollision_CircleRect(
+		  const Circle& circle
+		, const Rectangle& rect
+	) noexcept
 	{
 		return false;
 	}
 
-	bool testCollision_PaddlePowerUp(const Paddle& paddle, const PowerUp& powerUp) noexcept
+
+	bool testCollision_CapsuleRect(
+		  const Capsule& capsule
+		, const Rectangle& rect
+	) noexcept
 	{
 		return false;
 	}

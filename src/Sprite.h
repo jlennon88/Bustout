@@ -14,6 +14,9 @@ namespace bustout
 		void setScale(const sf::Vector2f& scale);
 
 		void draw(sf::RenderWindow& window, const sf::Vector2f& position) noexcept;
+
+		sf::Sprite& getSprite() noexcept { return m_sprite; }
+		const sf::Sprite& getSprite() const noexcept { return m_sprite; }
 	protected:
 		sf::Texture m_texture;
 		sf::Sprite m_sprite;

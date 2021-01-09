@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
 
+#ifdef BUSTOUT_DEBUG
 #include "DebugDraw.h"
+#endif
 
 #include "collision.h"
 #include "maths.h"
 #include "AnimatedSprite.h"
+#include "Paddle.h"
 
 #include <iostream>
 
@@ -15,7 +18,7 @@ const static sf::Vector2f SpaceScale = { 2 , -2 * (float)MainWindowHeight / (flo
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(MainWindowWidth, MainWindowHeight), "Bustout");
+	sf::RenderWindow window(sf::VideoMode(MainWindowWidth, MainWindowHeight), "Bustout", sf::Style::Default & ~sf::Style::Resize);
 	window.setVerticalSyncEnabled(true);
 	window.setMouseCursorVisible(false);
 
@@ -24,31 +27,16 @@ int main()
 	worldView.setCenter(0.0f, 0.0f);
 	worldView.setSize(SpaceScale);
 
-	bustout::Ball ball;
-	ball.position = { 0.0f, 0.0f };
-	ball.velocity = { 0.0f, 0.0f };
-	ball.radius = 0.02f;
-	bustout::DebugRenderer::get().registerObject(ball);
-
-	const float paddleSpeed = 0.5f;
-	bustout::Paddle paddle;
-	paddle.pointA = { -0.075f, -0.5f };
-	paddle.pointB = {  0.075f, -0.5f };
-	paddle.radius = 0.02f;
-	bustout::DebugRenderer::get().registerObject(paddle);
-
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
-	bustout::AnimatedSprite paddleSprite("paddle_beam.png");
-	paddleSprite.setFrameRect({ 0, 0, 128, 24 });
-	paddleSprite.setFrameDelta({ 0, 24 });
-	paddleSprite.setFrameCount(6);
-	paddleSprite.setFrameRate(12.0f);
-	paddleSprite.setScale({ 0.15f / 128.0f, 0.15f / 128.0f });
+	bustout::Paddle paddle;
 
+	sf::Clock clock;
 	bool shouldClose = false;
 	while (!shouldClose)
 	{
+		const float elapsedTime = clock.getElapsedTime().asSeconds();
+		clock.restart();
 		sf::Event evt;
 		while (window.pollEvent(evt))
 		{
@@ -59,24 +47,12 @@ int main()
 		window.clear(clearColor);
 
 		// update scene
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-		{
-			paddle.pointA.x -= paddleSpeed * (1 / 75.0f);
-			paddle.pointB.x -= paddleSpeed * (1 / 75.0f);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-		{
-			paddle.pointA.x += paddleSpeed * (1 / 75.0f);
-			paddle.pointB.x += paddleSpeed * (1 / 75.0f);
-		}
-		const float paddleLength = bustout::length(paddle.pointB - paddle.pointA);
-		paddle.pointA.x = bustout::clamp(paddle.pointA.x, -1.0f + paddle.radius, 1.0f - paddle.radius - paddleLength);
-		paddle.pointB.x = bustout::clamp(paddle.pointB.x, -1.0f + paddle.radius + paddleLength, 1.0f - paddle.radius);
+		paddle.update(elapsedTime);
 
 		// draw scene
 		window.setView(worldView);
 
-		const auto mousePos = sf::Mouse::getPosition(window);
+	/*	const auto mousePos = sf::Mouse::getPosition(window);
 		ball.position = { ((float)mousePos.x - 0.5f * (float)MainWindowWidth) * (SpaceScale.x / (float)MainWindowWidth), ((float)mousePos.y - 0.5f * (float)MainWindowHeight) * (SpaceScale.y / (float)MainWindowHeight) };
 		const auto collisionData = bustout::testCollision_BallPaddle(ball, paddle);
 		if (collisionData.has_value())
@@ -107,19 +83,20 @@ int main()
 			bustout::DebugRenderer::get().setOutlineColour({ 0x00, 0xFF, 0x00, 0xFF });
 
 			bustout::DebugRenderer::get().draw(window);
-		}
+		}*/
 
-		paddleSprite.update(1 / 75.0f);
-		paddleSprite.draw(window, 0.5f * (paddle.pointB + paddle.pointA));
+		paddle.draw(window);
+
+
+#ifdef BUSTOUT_DEBUG
+		bustout::DebugRenderer::get().draw(window);
+#endif
 
 		// draw ui
 		window.setView(uiView);
 		
 		window.display();
 	}
-
-	bustout::DebugRenderer::get().removeObject(ball);
-	bustout::DebugRenderer::get().removeObject(paddle);
 
 	return 0;
 }

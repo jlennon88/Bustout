@@ -10,8 +10,14 @@ set(
 		
 		src/maths.h
 		
+		src/Shapes.h
+		
 		src/Ball.h
+		src/Ball.cpp
+		
 		src/Paddle.h
+		src/Paddle.cpp
+		
 		src/BlockGrid.h
 		src/BlockGrid.cpp
 		src/PowerUp.h
@@ -66,7 +72,7 @@ add_sfml_dependency(Bustout sfml-graphics)
 add_sfml_dependency(Bustout sfml-window)
 add_sfml_dependency(Bustout sfml-system)
 
-target_compile_definitions(Bustout PRIVATE ASSET_DIR="${CMAKE_SOURCE_DIR}/assets")
+target_compile_definitions(Bustout PRIVATE ASSET_DIR="${CMAKE_SOURCE_DIR}/assets" $<$<CONFIG:Debug>:BUSTOUT_DEBUG>)
 
 # set max warning level and VS startup project
 if(MSVC)
