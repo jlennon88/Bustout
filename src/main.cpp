@@ -12,9 +12,38 @@
 #include <iostream>
 
 constexpr int MainWindowWidth = 800;
-constexpr int MainWindowHeight = 600;
+constexpr int MainWindowHeight = 800;
 
-const static sf::Vector2f SpaceScale = { 2 , -2 * (float)MainWindowHeight / (float)MainWindowWidth };
+const static sf::Vector2f SpaceScale = { 2 , -2 };
+//
+//constexpr float UIWidth = 0.2f;
+//
+//void onWindowResize(sf::RenderWindow& window, sf::View& worldView, sf::View& uiView)
+//{
+//	const float aspectRatio = window.getSize().y / static_cast<float>(window.getSize().x);
+//	sf::FloatRect worldViewport{};
+//	sf::FloatRect uiViewport{};
+//	if (aspectRatio < 1)
+//	{
+//		worldViewport.width = (1.0f - UIWidth) * aspectRatio;
+//		worldViewport.height = 1.0f;
+//
+//		uiViewport.left = worldViewport.width;
+//		uiViewport.width = UIWidth * aspectRatio;
+//		uiViewport.height = 1.0f;
+//	}
+//	else
+//	{
+//		worldViewport.width = 1.0f - UIWidth;
+//		worldViewport.height = 1 / aspectRatio;
+//
+//		uiViewport.left = worldViewport.width;
+//		uiViewport.width = UIWidth;
+//		uiViewport.height = 1 / aspectRatio;
+//	}
+//	worldView.setViewport(worldViewport);
+//	uiView.setViewport(uiViewport);
+//}
 
 int main()
 {
@@ -26,10 +55,11 @@ int main()
 	sf::View worldView = window.getView();
 	worldView.setCenter(0.0f, 0.0f);
 	worldView.setSize(SpaceScale);
+//	onWindowResize(window, worldView, uiView);
 
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
-	bustout::Paddle paddle;
+	bustout::Paddle paddle({ 0.0f, -0.9f });
 
 	sf::Clock clock;
 	bool shouldClose = false;
@@ -94,7 +124,7 @@ int main()
 
 		// draw ui
 		window.setView(uiView);
-		
+
 		window.display();
 	}
 
