@@ -4,7 +4,7 @@
 
 #include "collision.h"
 #include "maths.h"
-#include "Sprite.h"
+#include "AnimatedSprite.h"
 
 #include <iostream>
 
@@ -39,8 +39,11 @@ int main()
 
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
-	bustout::Sprite paddleSprite("paddle_beam.png");
-	paddleSprite.setTextureRect({ 0, 0, 128, 24 });
+	bustout::AnimatedSprite paddleSprite("paddle_beam.png");
+	paddleSprite.setFrameRect({ 0, 0, 128, 24 });
+	paddleSprite.setFrameDelta({ 0, 24 });
+	paddleSprite.setFrameCount(6);
+	paddleSprite.setFrameRate(12.0f);
 	paddleSprite.setScale({ 0.15f / 128.0f, 0.15f / 128.0f });
 
 	bool shouldClose = false;
@@ -54,6 +57,21 @@ int main()
 		}
 
 		window.clear(clearColor);
+
+		// update scene
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
+		{
+			paddle.pointA.x -= paddleSpeed * (1 / 75.0f);
+			paddle.pointB.x -= paddleSpeed * (1 / 75.0f);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
+		{
+			paddle.pointA.x += paddleSpeed * (1 / 75.0f);
+			paddle.pointB.x += paddleSpeed * (1 / 75.0f);
+		}
+		const float paddleLength = bustout::length(paddle.pointB - paddle.pointA);
+		paddle.pointA.x = bustout::clamp(paddle.pointA.x, -1.0f + paddle.radius, 1.0f - paddle.radius - paddleLength);
+		paddle.pointB.x = bustout::clamp(paddle.pointB.x, -1.0f + paddle.radius + paddleLength, 1.0f - paddle.radius);
 
 		// draw scene
 		window.setView(worldView);
@@ -91,20 +109,7 @@ int main()
 			bustout::DebugRenderer::get().draw(window);
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
-		{
-			paddle.pointA.x -= paddleSpeed * (1 / 75.0f);
-			paddle.pointB.x -= paddleSpeed * (1 / 75.0f);
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))
-		{
-			paddle.pointA.x += paddleSpeed * (1 / 75.0f);
-			paddle.pointB.x += paddleSpeed * (1 / 75.0f);
-		}
-		const float paddleLength = bustout::length(paddle.pointB - paddle.pointA);
-		paddle.pointA.x = bustout::clamp(paddle.pointA.x, -1.0f + paddle.radius, 1.0f - paddle.radius - paddleLength);
-		paddle.pointB.x = bustout::clamp(paddle.pointB.x, -1.0f + paddle.radius + paddleLength, 1.0f - paddle.radius);
-
+		paddleSprite.update(1 / 75.0f);
 		paddleSprite.draw(window, 0.5f * (paddle.pointB + paddle.pointA));
 
 		// draw ui

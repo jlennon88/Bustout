@@ -23,6 +23,8 @@ set(
 	gfx_sources
 		src/Sprite.h
 		src/Sprite.cpp
+		src/AnimatedSprite.h
+		src/AnimatedSprite.cpp
 )
 
 set(
