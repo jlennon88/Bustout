@@ -38,8 +38,8 @@ namespace bustout
 		m_shape.position += m_velocity * elapsedTime;
 	}
 
-	void Ball::draw(sf::RenderWindow& window)
+	void Ball::draw(sf::RenderTarget& target)
 	{
-		m_sprite.draw(window, m_shape.position);
+		m_sprite.draw(target, m_shape.position);
 	}
 }

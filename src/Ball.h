@@ -28,7 +28,7 @@ namespace bustout
 
 		void update(float elapsedTime);
 
-		void draw(sf::RenderWindow& window);
+		void draw(sf::RenderTarget& target);
 
 	private:
 		Sprite m_sprite;

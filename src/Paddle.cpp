@@ -50,13 +50,13 @@ namespace bustout
 		m_beamSprite.update(elapsedTime);
 	}
 
-	void Paddle::draw(sf::RenderWindow& window)
+	void Paddle::draw(sf::RenderTarget& target)
 	{
 		m_endSprite.setScale(-s_endSpriteScale);
-		m_endSprite.draw(window, getPosition() + sf::Vector2f(m_shape.halfLength, 0.0f));
+		m_endSprite.draw(target, getPosition() + sf::Vector2f(m_shape.halfLength, 0.0f));
 		m_endSprite.setScale(s_endSpriteScale);
-		m_endSprite.draw(window, getPosition() - sf::Vector2f(m_shape.halfLength, 0.0f));
+		m_endSprite.draw(target, getPosition() - sf::Vector2f(m_shape.halfLength, 0.0f));
 
-		m_beamSprite.draw(window, getPosition());
+		m_beamSprite.draw(target, getPosition());
 	}
 }

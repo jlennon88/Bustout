@@ -13,7 +13,7 @@ namespace bustout
 		void setTextureRect(const sf::IntRect& rect);
 		void setScale(const sf::Vector2f& scale);
 
-		void draw(sf::RenderWindow& window, const sf::Vector2f& position) noexcept;
+		void draw(sf::RenderTarget& target, const sf::Vector2f& position) noexcept;
 
 		sf::Sprite& getSprite() noexcept { return m_sprite; }
 		const sf::Sprite& getSprite() const noexcept { return m_sprite; }

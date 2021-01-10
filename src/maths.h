@@ -10,11 +10,11 @@ namespace bustout
 
 	constexpr float to_radians(float theta) noexcept
 	{
-		return theta * ((2 * PI) / 180.0f);
+		return theta * (PI / 180.0f);
 	}
 	constexpr float to_degrees(float theta) noexcept
 	{
-		return theta * (180.0f / (2 * PI));
+		return theta * (180.0f / PI);
 	}
 
 	template<typename T>
@@ -35,14 +35,16 @@ namespace bustout
 	template<typename T>
 	constexpr int sgn(T val) noexcept { return (val > 0) - (val < 0); }
 
+	// linear interpolation between a and b, t should be in [0, 1]
 	constexpr float lerp(float t, float a, float b) noexcept
 	{
 		return t * (b - a) + a;
 	}
 
+	// linear interpolation between a and b, t should be in [0, 1]
 	inline sf::Vector2f lerp(float t, const sf::Vector2f& a, const sf::Vector2f& b) noexcept
 	{
-		return t * (b - a) + a;
+		return { lerp(t, a.x, b.x), lerp(t, a.y, b.y) };
 	}
 
 	// smoothly interpolate between 0 and 1

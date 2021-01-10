@@ -28,9 +28,9 @@ namespace bustout
 		m_sprite.setScale(scale);
 	}
 
-	void Sprite::draw(sf::RenderWindow& window, const sf::Vector2f& position) noexcept
+	void Sprite::draw(sf::RenderTarget& target, const sf::Vector2f& position) noexcept
 	{
 		m_sprite.setPosition(position);
-		window.draw(m_sprite);
+		target.draw(m_sprite);
 	}
 }
