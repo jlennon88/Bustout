@@ -3,7 +3,7 @@
 #include <SFML/System.hpp>
 
 #include "Shapes.h"
-#include "Sprite.h"
+#include "gfx/Sprite.h"
 
 namespace bustout
 {

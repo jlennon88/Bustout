@@ -1,7 +1,7 @@
 #include "Ball.h"
 
 #ifdef BUSTOUT_DEBUG
-#include "DebugDraw.h"
+#include "debug/DebugDraw.h"
 #endif
 
 namespace bustout

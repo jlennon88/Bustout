@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scene.h"
-#include "Canvas.h"
+#include "ui/Canvas.h"
 
 namespace bustout
 {

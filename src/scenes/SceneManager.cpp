@@ -3,7 +3,7 @@
 
 namespace bustout
 {
-	void SceneManager::loadScene(const std::string& sceneName)
+	void SceneManager::activateScene(const std::string& sceneName)
 	{
 		assert(m_scenes.find(sceneName) != std::end(m_scenes));
 

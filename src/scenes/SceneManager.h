@@ -19,7 +19,7 @@ namespace bustout
 			m_scenes[std::move(sceneName)] = std::make_shared<SceneType>(*this, std::forward(args)...);
 		}
 
-		void loadScene(const std::string& sceneName);
+		void activateScene(const std::string& sceneName);
 
 		SceneRef getCurrentScene() noexcept { return m_currentScene; }
 

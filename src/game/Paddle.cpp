@@ -1,7 +1,7 @@
 #include "Paddle.h"
 
 #ifdef BUSTOUT_DEBUG
-#include "DebugDraw.h"
+#include "debug/DebugDraw.h"
 #endif
 
 #include "maths.h"

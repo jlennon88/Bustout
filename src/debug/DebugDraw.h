@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Ball.h"
-#include "Paddle.h"
-#include "BlockGrid.h"
-#include "PowerUp.h"
+#include "game/Shapes.h"
 
 #include <SFML/Graphics.hpp>
 

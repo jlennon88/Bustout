@@ -1,13 +1,13 @@
 #include <SFML/Graphics.hpp>
 
 #ifdef BUSTOUT_DEBUG
-#include "DebugDraw.h"
+#include "debug/DebugDraw.h"
 #endif
 
-#include "collision.h"
+#include "game/collision.h"
 #include "maths.h"
-#include "AnimatedSprite.h"
-#include "Paddle.h"
+#include "gfx/AnimatedSprite.h"
+#include "game/Paddle.h"
 
 #include <iostream>
 
