@@ -8,6 +8,8 @@
 #include "maths.h"
 #include "gfx/AnimatedSprite.h"
 #include "game/Paddle.h"
+#include "ui/Button.h"
+#include "ui/Canvas.h"
 
 #include <iostream>
 
@@ -16,11 +18,32 @@ constexpr int MainWindowHeight = 800;
 
 const static sf::Vector2f SpaceScale = { 2 , -2 };
 
+bool buttonState = false;
+void onButtonClick()
+{
+	if (!buttonState)
+	{
+		std::cout << "Button Clicked\n";
+		buttonState = true;
+	}
+}
+void onButtonReleased()
+{
+	if (buttonState)
+	{
+		std::cout << "Button Released\n";
+		buttonState = false;
+	}
+}
+
 int main()
 {
 	sf::RenderWindow window(sf::VideoMode(MainWindowWidth, MainWindowHeight), "Bustout", sf::Style::Default & ~sf::Style::Resize);
 	window.setVerticalSyncEnabled(true);
 	window.setMouseCursorVisible(false);
+
+	bustout::Canvas testCanvas(MainWindowWidth, MainWindowHeight);
+	auto button = testCanvas.addElement<bustout::Button>(onButtonClick, onButtonReleased, "Button");
 
 	sf::View uiView = window.getView();
 	sf::View worldView = window.getView();
@@ -94,6 +117,21 @@ int main()
 
 		// draw ui
 		window.setView(uiView);
+
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			testCanvas.onClick();
+		if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+			testCanvas.onRelease();
+		testCanvas.draw(window);
+
+		const auto mousePosi = sf::Mouse::getPosition(window);
+		const sf::Vector2f mousePosf = { (float)mousePosi.x, (float)mousePosi.y };
+		sf::CircleShape mouseDot;
+		mouseDot.setPosition(mousePosf);
+		mouseDot.setFillColor(sf::Color::White);
+		mouseDot.setRadius(1.0f);
+		mouseDot.setOrigin(0.5f, 0.5f);
+		window.draw(mouseDot);
 
 		window.display();
 	}

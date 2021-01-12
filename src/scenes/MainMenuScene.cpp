@@ -1,5 +1,7 @@
 #include "MainMenuScene.h"
 
+#include <SFML/Window.hpp>
+
 namespace bustout
 {
 	void MainMenuScene::activate()
