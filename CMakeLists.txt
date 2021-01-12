@@ -10,6 +10,9 @@ set(
 		
 		src/maths.h
 		
+		src/Layer.h
+		src/Layer.cpp
+		
 		src/Shapes.h
 		
 		src/Ball.h
@@ -33,6 +36,24 @@ set(
 		src/AnimatedSprite.cpp
 )
 
+
+set(
+	scenes_sources
+		src/Scene.h
+		src/Scene.cpp
+		src/SceneManager.h
+		src/SceneManager.cpp
+		
+		src/MainMenuScene.h
+		src/MainMenuScene.cpp
+)
+
+set(
+	ui_sources
+		src/Canvas.h
+		src/Canvas.cpp
+)
+
 set(
 	debug_sources
 		src/DebugDraw.h
@@ -42,6 +63,8 @@ set(
 add_executable(
 	Bustout
 		${main_sources}
+		${scenes_sources}
+		${ui_sources}
 		${gfx_sources}
 		$<$<CONFIG:Debug>:${debug_sources}>
 )
@@ -49,6 +72,8 @@ add_executable(
 set_target_properties(Bustout PROPERTIES CXX_STANDARD 17)
 
 source_group(main FILES ${main_sources})
+source_group(scenes FILES ${scenes_sources})
+source_group(ui FILES ${ui_sources})
 source_group(gfx FILES ${gfx_sources})
 source_group(debug FILES $<$<CONFIG:Debug>:${debug_sources}>)
 

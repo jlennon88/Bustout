@@ -8,14 +8,8 @@ namespace bustout
 {
 	constexpr float PI = 3.14159265359f;
 
-	constexpr float to_radians(float theta) noexcept
-	{
-		return theta * (PI / 180.0f);
-	}
-	constexpr float to_degrees(float theta) noexcept
-	{
-		return theta * (180.0f / PI);
-	}
+	constexpr float to_radians(float theta) noexcept { return theta * (PI / 180.0f); }
+	constexpr float to_degrees(float theta) noexcept { return theta * (180.0f / PI); }
 
 	template<typename T>
 	constexpr T min(T a, T b) noexcept { return a < b ? a : b; }
