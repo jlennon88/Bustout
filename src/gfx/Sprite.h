@@ -12,6 +12,7 @@ namespace bustout
 
 		void setTextureRect(const sf::IntRect& rect);
 		void setScale(const sf::Vector2f& scale);
+		void setColour(const sf::Color& colour);
 
 		void draw(sf::RenderTarget& target, const sf::Vector2f& position) noexcept;
 

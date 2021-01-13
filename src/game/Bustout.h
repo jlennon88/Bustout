@@ -19,5 +19,6 @@ namespace bustout
 		bool m_ballFixed = true;
 		Ball m_ball;
 		Paddle m_paddle;
+		BlockGrid m_blockGrid;
 	};
 }

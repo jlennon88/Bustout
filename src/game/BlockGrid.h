@@ -2,9 +2,11 @@
 
 #include <SFML/System.hpp>
 
-#include "Block.h"
+#include "gfx/Sprite.h"
+#include "Shapes.h"
+#include "Ball.h"
 
-#include <memory>
+#include <vector>
 
 namespace bustout
 {
@@ -12,6 +14,7 @@ namespace bustout
 	{
 	public:
 		BlockGrid(int xCount, int yCount);
+		~BlockGrid();
 
 		void setBlockHealth(int x, int y, int health) noexcept;
 		int getBlockHealth(int x, int y) const noexcept;
@@ -36,20 +39,25 @@ namespace bustout
 		// returns the top-left position of the grid
 		const sf::Vector2f& getGridPosition() const noexcept { return m_position; }
 
-		void setGridCentre(const sf::Vector2f& position) noexcept;
 		sf::Vector2f getGridCentre() const noexcept;
 
-		// sets the position of the grid so that its centre is at ( 0.0f, 0.0f )
-		void centreGrid() noexcept;
+		void handleCollision(Ball& ball) noexcept;
+
+		void draw(sf::RenderTarget& target);
 	private:
 		int m_xCount;
 		int m_yCount;
 
-		float m_blockWidth = 100.0f;
-		float m_blockHeight = 50.0f;
+		float m_blockWidth = 0.15f;
+		float m_blockHeight = 0.05f;
 
 		sf::Vector2f m_position{ 0.0f, 0.0f };
 
-		std::unique_ptr<int> m_blocks;
+		Sprite m_blockSprite;
+
+		std::vector<int> m_blocks;
+#ifdef BUSTOUT_DEBUG
+		std::vector<Rectangle> m_debugBlocks;
+#endif
 	};
 }

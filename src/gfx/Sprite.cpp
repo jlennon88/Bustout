@@ -31,6 +31,11 @@ namespace bustout
 		m_sprite.setScale(scale.x, scale.y);
 	}
 
+	void Sprite::setColour(const sf::Color& colour)
+	{
+		m_sprite.setColor(colour);
+	}
+
 	void Sprite::draw(sf::RenderTarget& target, const sf::Vector2f& position) noexcept
 	{
 		m_sprite.setPosition(position);

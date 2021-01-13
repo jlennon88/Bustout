@@ -70,7 +70,7 @@ namespace bustout
 			// draw end points
 			circle.setOrigin({ capsule->radius, capsule->radius });
 			circle.setRadius(capsule->radius);
-			circle.setPosition(capsule->position - sf::Vector2f(-capsule->halfLength, 0.0f));
+			circle.setPosition(capsule->position + sf::Vector2f(capsule->halfLength, 0.0f));
 			window.draw(circle);
 			circle.setPosition(capsule->position + sf::Vector2f(-capsule->halfLength, 0.0f));
 			window.draw(circle);
@@ -91,6 +91,17 @@ namespace bustout
 		, const sf::Color& outlineColour
 	)
 	{
+		sf::RectangleShape rectangle;
+		rectangle.setOutlineThickness(-0.005f);
+		rectangle.setFillColor(fillColour);
+		rectangle.setOutlineColor(outlineColour);
+
+		for (const auto rect : rects)
+		{
+			rectangle.setPosition(rect->topLeft);
+			rectangle.setSize(rect->widthHeight);
+			window.draw(rectangle);
+		}
 	}
 
 	template<int IDX>
