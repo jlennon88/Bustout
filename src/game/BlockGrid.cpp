@@ -237,10 +237,8 @@ namespace bustout
 				if (m_blocks[colIdx] > 0)
 				{
 					if (--m_blocks[colIdx] == 0)
-					{
 						--m_remainingBlocks;
-						return true;
-					}
+					return true;
 				}
 			}
 		}

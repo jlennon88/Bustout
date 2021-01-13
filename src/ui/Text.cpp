@@ -21,6 +21,6 @@ namespace bustout
 		m_text.setString(text);
 		m_extent.x = m_text.getLocalBounds().width;
 		m_extent.y = m_text.getLocalBounds().height;
-		m_text.setOrigin(0.5f * m_extent);
+		//m_text.setOrigin(0.5f * m_extent);
 	}
 }

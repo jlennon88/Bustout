@@ -39,15 +39,21 @@ namespace bustout
 						m_ball.setVelocity(normalise(reflect(m_ball.getVelocity(), norm) + paddleVelocity) * m_ballSpeed);
 					}
 				}
-				else
+				else if(m_blockGrid.handleCollision(m_ball))
 				{
-					if (m_blockGrid.handleCollision(m_ball))
+					m_score += m_scoreIncrement;
+					if (m_blockGrid.getRemainingBlocks() == 0)
 					{
-						m_score += m_scoreIncrement;
-						if (m_blockGrid.getRemainingBlocks() == 0)
-						{
-							// TODO: implement 'game won'
-						}
+						// TODO: implement 'game won'
+					}
+				}
+				else if (m_ball.getPosition().y - m_ball.getShape().radius < m_killzone.topLeft.y + m_killzone.widthHeight.y)
+				{
+					--m_lives;
+					m_ballFixed = true;
+					if (m_lives == 0)
+					{
+						// TODO: implement 'game over'
 					}
 				}
 			}

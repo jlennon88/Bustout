@@ -8,7 +8,9 @@
 #include "maths.h"
 #include "gfx/AnimatedSprite.h"
 #include "game/Bustout.h"
+#include "ui/Text.h"
 
+#include <sstream>
 #include <iostream>
 
 constexpr int MainWindowWidth = 800;
@@ -30,7 +32,7 @@ int main()
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
 	bustout::Rectangle rect;
-	rect.topLeft = { -0.9f, 0.9f };
+	rect.topLeft = { -0.7f, 0.7f };
 	rect.widthHeight = { 0.1f, 0.1f };
 
 	const float mouseCircleRad = 0.05f;
@@ -40,7 +42,13 @@ int main()
 	bustout::DebugRenderer::get().registerObject(rect);
 	bustout::DebugRenderer::get().registerObject(mouseCircle);
 
-	bustout::Bustout gameInstance;
+	auto gameInstance = std::make_unique<bustout::Bustout>();
+
+	bustout::Text scoreText("Score: 0");
+	bustout::Text livesText("Lives: 0");
+
+	int prevScore = 0;
+	int prevLives = 0;
 
 	sf::Clock clock;
 	bool shouldClose = false;
@@ -57,16 +65,38 @@ int main()
 
 		window.clear(clearColor);
 		// update scene
-		gameInstance.update(elapsedTime);
+		gameInstance->update(elapsedTime);
+		if (gameInstance->getScore() != prevScore)
+		{
+			prevScore = gameInstance->getScore();
+			std::stringstream ss;
+			ss << "Score: " << prevScore;
+			scoreText.setText(ss.str());
+		}
+		if (gameInstance->getLives() != prevLives)
+		{
+			if (gameInstance->getLives() == 0)
+			{
+				// game over, just restart
+				gameInstance = std::make_unique<bustout::Bustout>();
+				continue;
+			}
+			prevLives = gameInstance->getLives();
+			std::stringstream ss;
+			ss << "Lives: " << prevLives;
+			livesText.setText(ss.str());
+			const auto extent = livesText.getExtent();
+			livesText.setPosition({ (float)MainWindowWidth - extent.x, 0.0f });
+		}
 
 		// draw scene
 		window.setView(worldView);
 
 
-		gameInstance.draw(window);
+		gameInstance->draw(window);
 
-		// some debug-specific tests
 #ifdef BUSTOUT_DEBUG
+		// some debug-specific tests
 		const auto mousePosi = sf::Mouse::getPosition(window);
 		const sf::Vector2f mousePosf = { (float)(mousePosi.x - MainWindowWidth / 2), (float)(mousePosi.y - MainWindowHeight / 2) };
 		const sf::Vector2f mousePosScaled = { mousePosf.x * 2 / (float)MainWindowWidth, -mousePosf.y * 2 / (float)MainWindowHeight };
@@ -86,12 +116,8 @@ int main()
 		// draw ui
 		window.setView(uiView);
 
-		//sf::CircleShape mouseDot;
-		//mouseDot.setPosition(mousePosf);
-		//mouseDot.setFillColor(sf::Color::White);
-		//mouseDot.setRadius(10.0f);
-		//mouseDot.setOrigin(1.5f, 1.5f);
-		//window.draw(mouseDot);
+		scoreText.draw(window);
+		livesText.draw(window);
 
 		window.display();
 	}

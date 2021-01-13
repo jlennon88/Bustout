@@ -17,11 +17,13 @@ namespace bustout
 		const BlockGrid& getBlockGrid() const noexcept { return m_blockGrid; }
 
 		int getScore() const noexcept { return m_score; }
+		int getLives() const noexcept { return m_lives; }
 	private:
 		float m_ballSpeed = 1.0f;
 		bool m_ballFixed = true;
 		int m_score = 0;
 		int m_scoreIncrement = 100;
+		int m_lives = 3;
 		Ball m_ball;
 		Paddle m_paddle;
 		BlockGrid m_blockGrid;
