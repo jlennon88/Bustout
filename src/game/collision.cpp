@@ -9,6 +9,12 @@ namespace bustout
 		, const Circle& circleB
 	) noexcept
 	{
+		// circles overlap if the distance between them is less
+		// than the sum of their radii
+		// - equivalently, and more performantly (no sqrt), if the squared
+		//	 distance between them is less than the square of the
+		//	 sum of their radii
+
 		const auto delta = circleA.position - circleB.position;
 		const float d2 = dot(delta, delta);
 		const float sr = circleA.radius + circleB.radius;
@@ -21,6 +27,10 @@ namespace bustout
 		, const Capsule& capsule
 	) noexcept
 	{
+		// capsule is defined by a line with a radius
+		// - circle overlaps if the distance between the line
+		//	 and circle centre is less than the sum of radii
+
 		const auto capsulePointA = capsule.position - sf::Vector2f(capsule.halfLength, 0.0f);
 		const auto capsuleVector = sf::Vector2f(2 * capsule.halfLength, 0.0f);
 		const auto circleVector = circle.position - capsulePointA;

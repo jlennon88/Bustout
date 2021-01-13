@@ -18,6 +18,8 @@ namespace bustout
 
 		int getScore() const noexcept { return m_score; }
 		int getLives() const noexcept { return m_lives; }
+
+		bool isGameOver() const noexcept;
 	private:
 		float m_ballSpeed = 1.0f;
 		bool m_ballFixed = true;

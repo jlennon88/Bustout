@@ -16,6 +16,11 @@ namespace bustout
 		BlockGrid(int xCount, int yCount);
 		~BlockGrid();
 
+		// health is an integer in the interval [-1, 3]
+		// - -1: indestructable block
+		// -  0: empty space
+		// - >0: destructable block
+		// TODO: make health an enum class to constraint values
 		void setBlockHealth(int x, int y, int health) noexcept;
 		int getBlockHealth(int x, int y) const noexcept;
 

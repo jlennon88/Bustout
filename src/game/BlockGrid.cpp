@@ -24,12 +24,18 @@ namespace bustout
 		assert(yCount > 0);
 
 		m_blocks.resize((size_t)xCount * (size_t)yCount);
+
+		// generate pseudo-random block layout
+		// - this can lead to unwinnable games since there
+		//	 aren't checks on destructable blocks being
+		//	 surrounded by indestructable blocks
 		std::generate(std::begin(m_blocks), std::end(m_blocks), []() 
 			{
 				return rand() % 5 - 1;
 			}
 		);
 
+		// count the number of blocks that have positive hp
 		m_remainingBlocks = (int)std::count_if(std::begin(m_blocks), std::end(m_blocks), [](int hp)
 			{
 				return hp > 0;
@@ -38,8 +44,8 @@ namespace bustout
 
 		m_blockSprite.setScale(
 			{
-				m_blockWidth * 1 / m_blockSprite.getSprite().getTextureRect().width,
-				m_blockHeight * 1 / m_blockSprite.getSprite().getTextureRect().height,
+				m_blockWidth / m_blockSprite.getSprite().getTextureRect().width,
+				m_blockHeight / m_blockSprite.getSprite().getTextureRect().height,
 			}
 		);
 
@@ -147,24 +153,14 @@ namespace bustout
 			int yCount = 2;
 			auto [x0, y0] = getPointCoords(ballAABB.topLeft);
 
-			if (x0 < 0)
+			if (x0 < 0 || x0 + 1 >= m_xCount)
 			{
-				x0 = 0;
+				x0 = clamp(x0, 0, m_xCount - 1);
 				xCount /= 2;
 			}
-			else if (x0 + 1 >= m_xCount)
+			if (y0 < 0 || y0 + 1 >= m_yCount)
 			{
-				x0 = m_xCount - 1;
-				xCount /= 2;
-			}
-			if (y0 < 0)
-			{
-				y0 = 0;
-				yCount /= 2;
-			}
-			else if (y0 + 1 >= m_yCount)
-			{
-				y0 = m_yCount - 1;
+				y0 = clamp(y0, 0, m_yCount - 1);
 				yCount /= 2;
 			}
 			
@@ -176,9 +172,9 @@ namespace bustout
 			{
 				for (int x = x0; x < x0 + xCount; ++x)
 				{
+					// ignore empty spaces defined by 0
 					if (m_blocks[idx] != 0)
 					{
-						// handle collision
 						Rectangle block = getBlock(x, y);
 						const auto collisionData = testCollision_CircleRect(ball.getShape(), block);
 						if (collisionData.has_value())
@@ -202,29 +198,6 @@ namespace bustout
 								}
 							}
 						}
-						//if (collisionData.has_value())
-						//{
-						//	const auto blockMid = block.topLeft + 0.5f * block.widthHeight;
-						//	const auto ballToBlock = blockMid - ball.getPosition();
-						//	for (const auto edge : getEdges(block))
-						//	{
-						//		if (testCollision_LineLine({ ball.getPosition(), blockMid }, edge))
-						//		{
-						//			const auto normal = normalise(cross(1.0f, edge.p1 - edge.p0));
-						//			const auto dist = ball.getShape().radius + 0.5f * dot(normal, block.widthHeight) - dot(normal, ballToBlock);
-						//			if (dist > 0.0f)
-						//			{
-						//				// if this is the right edge, then move the ball along the normal of the edge
-						//				// until it is only touching the block
-						//				didCollide = true;
-						//				collisionNormal = normal;
-						//				colIdx = idx;
-						//				const auto disp = dist * normal;
-						//				ball.setPosition(disp + ball.getPosition());
-						//			}
-						//		}
-						//	}
-						//}
 					}
 					++idx;
 				}
@@ -257,7 +230,7 @@ namespace bustout
 			for (int x = 0; x < m_xCount; ++x)
 			{
 				int blockHealth = m_blocks[idx++];
-				sf::Color blockColour = sf::Color::White;
+				sf::Color blockColour = { 0xCC, 0xCC, 0xCC, 0xFF };
 				if (blockHealth >= 0)
 				{
 					switch (blockHealth)

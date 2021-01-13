@@ -87,4 +87,8 @@ namespace bustout
 		m_paddle.draw(target);
 		m_ball.draw(target);
 	}
+	bool Bustout::isGameOver() const noexcept
+	{
+		return m_lives == 0 || m_blockGrid.getRemainingBlocks() <= 0;
+	}
 }
