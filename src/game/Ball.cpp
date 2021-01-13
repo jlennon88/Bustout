@@ -12,8 +12,11 @@ namespace bustout
 		, m_velocity(initialVelocity)
 		, m_prevPosition(initialPosition)
 	{
+		m_aabb.topLeft = m_shape.position - sf::Vector2f(m_shape.radius, -m_shape.radius);
+		m_aabb.widthHeight = { 2.0f * radius, 2.0f * radius };
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().registerObject(m_shape);
+		DebugRenderer::get().registerObject(m_aabb);
 #endif
 		
 		m_sprite.setScale({ m_shape.radius * 2 / m_sprite.getSprite().getTextureRect().width, m_shape.radius  * 2/ m_sprite.getSprite().getTextureRect().height });
@@ -23,12 +26,14 @@ namespace bustout
 	{
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().removeObject(m_shape);
+		DebugRenderer::get().removeObject(m_aabb);
 #endif
 	}
 
 	void Ball::setPosition(const sf::Vector2f& position) noexcept
 	{
 		m_shape.position = position;
+		m_aabb.topLeft = m_shape.position - sf::Vector2f(m_shape.radius, -m_shape.radius);
 	}
 
 	void Ball::setVelocity(const sf::Vector2f& velocity) noexcept
@@ -62,6 +67,8 @@ namespace bustout
 			m_shape.position.y = m_shape.radius - 1;
 			m_velocity.y = -m_velocity.y;
 		}
+
+		m_aabb.topLeft = m_shape.position - sf::Vector2f(m_shape.radius, -m_shape.radius);
 	}
 
 	void Ball::draw(sf::RenderTarget& target)

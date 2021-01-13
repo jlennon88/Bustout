@@ -1,6 +1,7 @@
 #include "BlockGrid.h"
 
 #include "maths.h"
+#include "collision.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -8,6 +9,8 @@
 #ifdef BUSTOUT_DEBUG
 #include "debug/DebugDraw.h"
 #endif
+
+#include <iostream>
 
 namespace bustout
 {
@@ -33,11 +36,13 @@ namespace bustout
 			}
 		);
 
+		m_aabb.topLeft = { -m_blockWidth * (m_xCount / 2.0f), m_blockHeight * (m_yCount / 2.0f) };
+		m_aabb.widthHeight = { m_blockWidth * (m_xCount), m_blockHeight * (m_yCount) };
 #ifdef BUSTOUT_DEBUG
 		m_debugBlocks.resize(m_blocks.size());
 
 		size_t idx = 0;
-		const sf::Vector2f initPos = { -m_blockWidth * (m_xCount / 2.0f), -m_blockHeight * (m_yCount / 2.0f) };
+		const sf::Vector2f initPos = { -m_blockWidth * (m_xCount / 2.0f), m_blockHeight * (m_yCount / 2.0f) };
 		sf::Vector2f blockPos = initPos;
 		for (int y = 0; y < m_yCount; ++y)
 		{
@@ -52,8 +57,10 @@ namespace bustout
 
 				blockPos.x += m_blockWidth;
 			}
-			blockPos.y += m_blockHeight;
+			blockPos.y -= m_blockHeight;
 		}
+
+		DebugRenderer::get().registerObject(m_aabb);
 #endif
 	}
 
@@ -61,12 +68,11 @@ namespace bustout
 	{
 
 #ifdef BUSTOUT_DEBUG
-		m_debugBlocks.resize(m_blocks.size());
-
 		size_t idx = 0;
 		for (int y = 0; y < m_yCount; ++y)
 			for (int x = 0; x < m_xCount; ++x)
 				DebugRenderer::get().removeObject(m_debugBlocks[idx++]);
+		DebugRenderer::get().removeObject(m_aabb);
 #endif
 	}
 
@@ -118,8 +124,15 @@ namespace bustout
 		return m_position + sf::Vector2f{ 0.5f * getGridWidth(), 0.5f * getGridWidth() };
 	}
 
-	void BlockGrid::handleCollision(Ball& ball) noexcept
+	bool BlockGrid::handleCollision(Ball& ball) noexcept
 	{
+		const auto ballAABB = ball.getAABB();
+
+		if (testCollision_RectRect(ballAABB, m_aabb))
+		{
+			return true;
+		}
+		return false;
 	}
 
 	void BlockGrid::draw(sf::RenderTarget& target)

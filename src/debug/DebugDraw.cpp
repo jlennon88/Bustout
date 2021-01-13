@@ -99,7 +99,7 @@ namespace bustout
 		for (const auto rect : rects)
 		{
 			rectangle.setPosition(rect->topLeft);
-			rectangle.setSize(rect->widthHeight);
+			rectangle.setSize({ rect->widthHeight.x, -rect->widthHeight.y });
 			window.draw(rectangle);
 		}
 	}

@@ -18,6 +18,7 @@ namespace bustout
 	{
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().registerObject(m_shape);
+		DebugRenderer::get().registerObject(m_aabb);
 #endif
 
 		m_beamSprite.setFrameRect({ 0, 0, 128, 24 });
@@ -28,14 +29,24 @@ namespace bustout
 		
 		auto& endSprite = m_endSprite.getSprite();
 		endSprite.setScale(s_endSpriteScale);
-		endSprite.setOrigin(1.0f * endSprite.getTextureRect().width, endSprite.getTextureRect().height * 0.5f);
+		endSprite.setOrigin(1.0f * endSprite.getTextureRect().width, endSprite.getTextureRect().height * 0.5f); 
+
+		m_aabb.topLeft = m_shape.position + sf::Vector2f(-m_shape.halfLength - m_shape.radius, m_shape.radius);
+		m_aabb.widthHeight = { 2.0f * (m_shape.halfLength + m_shape.radius), 2.0f * m_shape.radius };
 	}
 
 	Paddle::~Paddle()
 	{
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().removeObject(m_shape);
+		DebugRenderer::get().removeObject(m_aabb);
 #endif
+	}
+
+	void Paddle::setPosition(const sf::Vector2f& position) noexcept
+	{ 
+		m_shape.position = position;
+		m_aabb.topLeft = m_shape.position + sf::Vector2f(-m_shape.halfLength - m_shape.radius, m_shape.radius);
 	}
 
 	void Paddle::update(float elapsedTime) noexcept
@@ -47,8 +58,9 @@ namespace bustout
 			m_shape.position.x += m_speed * elapsedTime;
 
 		const float halfSpan = m_shape.radius + m_shape.halfLength;
-		m_shape.position.x = clamp(m_shape.position.x, halfSpan - 1, 1 - halfSpan);
 
+		setPosition({ clamp(m_shape.position.x, halfSpan - 1, 1 - halfSpan), m_shape.position.y });
+		
 		m_beamSprite.update(elapsedTime);
 	}
 

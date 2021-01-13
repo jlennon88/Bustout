@@ -31,9 +31,12 @@ namespace bustout
 
 		void draw(sf::RenderTarget& target);
 
+		const Rectangle& getAABB() const noexcept { return m_aabb; }
+
 	private:
 		Sprite m_sprite;
 		Circle m_shape;
+		Rectangle m_aabb;
 		sf::Vector2f m_velocity;
 		sf::Vector2f m_prevPosition;
 	};

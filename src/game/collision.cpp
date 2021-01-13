@@ -58,4 +58,21 @@ namespace bustout
 	{
 		return false;
 	}
+	bool testCollision_RectRect(const Rectangle& rectA, const Rectangle& rectB) noexcept
+	{
+		const bool isLeft = rectA.topLeft.x + rectA.widthHeight.x < rectB.topLeft.x;
+		const bool isRight = rectA.topLeft.x > rectB.topLeft.x + rectB.widthHeight.x;
+		const bool isAbove = rectA.topLeft.y - rectA.widthHeight.y > rectB.topLeft.y;
+		const bool isBelow = rectA.topLeft.y < rectB.topLeft.y - rectB.widthHeight.y;
+
+		return !(isLeft || isRight || isAbove || isBelow);
+	}
+
+	Rectangle calculateAABB(const Circle& circle)
+	{
+		Rectangle aabb;
+		aabb.topLeft = { circle.position.x - circle.radius, circle.position.y + circle.radius };
+		aabb.widthHeight = { 2.0f * circle.radius, 2.0f * circle.radius };
+		return aabb;
+	}
 }

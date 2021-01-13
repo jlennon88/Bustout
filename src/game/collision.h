@@ -26,4 +26,11 @@ namespace bustout
 		  const Capsule& capsule
 		, const Rectangle& rect
 	) noexcept;
+
+	bool testCollision_RectRect(
+		  const Rectangle& rectA
+		, const Rectangle& rectB
+	) noexcept;
+
+	Rectangle calculateAABB(const Circle& circle);
 }

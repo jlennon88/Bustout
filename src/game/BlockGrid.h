@@ -41,7 +41,9 @@ namespace bustout
 
 		sf::Vector2f getGridCentre() const noexcept;
 
-		void handleCollision(Ball& ball) noexcept;
+		const Rectangle& getAABB() const noexcept;
+
+		bool handleCollision(Ball& ball) noexcept;
 
 		void draw(sf::RenderTarget& target);
 	private:
@@ -54,6 +56,8 @@ namespace bustout
 		sf::Vector2f m_position{ 0.0f, 0.0f };
 
 		Sprite m_blockSprite;
+
+		Rectangle m_aabb;
 
 		std::vector<int> m_blocks;
 #ifdef BUSTOUT_DEBUG

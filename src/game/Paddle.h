@@ -16,7 +16,7 @@ namespace bustout
 		Paddle(Paddle&&) = delete;
 		~Paddle();
 
-		void setPosition(const sf::Vector2f& position) noexcept { m_shape.position = position; }
+		void setPosition(const sf::Vector2f& position) noexcept;
 		const sf::Vector2f& getPosition() const noexcept { return m_shape.position; }
 		const sf::Vector2f& getPrevPosition() const noexcept { return m_prevPosition; }
 
@@ -28,6 +28,8 @@ namespace bustout
 		void update(float elapsedTime) noexcept;
 
 		void draw(sf::RenderTarget& target);
+
+		const Rectangle& getAABB() const noexcept { return m_aabb; }
 	private:
 		AnimatedSprite m_beamSprite;
 		Sprite m_endSprite;
@@ -35,5 +37,6 @@ namespace bustout
 		Capsule m_shape;
 		float m_speed = 0.7f;
 		sf::Vector2f m_prevPosition;
+		Rectangle m_aabb;
 	};
 }

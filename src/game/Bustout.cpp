@@ -23,16 +23,23 @@ namespace bustout
 			if (!m_ballFixed)
 			{
 				m_ball.update(subElapedTime);
-				auto collisionData = testCollision_CircleCapsule(m_ball.getShape(), m_paddle.getShape());
-				if (collisionData.has_value())
+				if (testCollision_RectRect(m_ball.getAABB(), m_paddle.getAABB()))
 				{
-					const auto disp = m_ball.getPosition() - collisionData.value();
-					const float dist = m_paddle.getShape().radius + m_ball.getShape().radius - length(disp);
-					const auto norm = normalise(disp);
-					m_ball.setPosition(m_ball.getPosition() + norm * dist);
+					auto collisionData = testCollision_CircleCapsule(m_ball.getShape(), m_paddle.getShape());
+					if (collisionData.has_value())
+					{
+						const auto disp = m_ball.getPosition() - collisionData.value();
+						const float dist = m_paddle.getShape().radius + m_ball.getShape().radius - length(disp);
+						const auto norm = normalise(disp);
+						m_ball.setPosition(m_ball.getPosition() + norm * dist);
 
-					const sf::Vector2f paddleVelocity = (m_paddle.getPosition() - m_paddle.getPrevPosition()) / subElapedTime;
-					m_ball.setVelocity(normalise(reflect(m_ball.getVelocity(), norm) + paddleVelocity) * m_ballSpeed);
+						const sf::Vector2f paddleVelocity = (m_paddle.getPosition() - m_paddle.getPrevPosition()) / subElapedTime;
+						m_ball.setVelocity(normalise(reflect(m_ball.getVelocity(), norm) + paddleVelocity) * m_ballSpeed);
+					}
+				}
+				else
+				{
+					m_blockGrid.handleCollision(m_ball);
 				}
 			}
 			else
