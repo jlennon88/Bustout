@@ -10,10 +10,13 @@ namespace bustout
 		: m_sprite("ball.png")
 		, m_shape({ initialPosition, radius })
 		, m_velocity(initialVelocity)
+		, m_prevPosition(initialPosition)
 	{
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().registerObject(m_shape);
 #endif
+		
+		m_sprite.setScale({ m_shape.radius * 2 / m_sprite.getSprite().getTextureRect().width, m_shape.radius  * 2/ m_sprite.getSprite().getTextureRect().height });
 	}
 
 	Ball::~Ball()
@@ -33,9 +36,32 @@ namespace bustout
 		m_velocity = velocity;
 	}
 
-	void Ball::update(float elapsedTime)
+	void Ball::update(float elapsedTime) noexcept
 	{
+		m_prevPosition = m_shape.position;
 		m_shape.position += m_velocity * elapsedTime;
+
+		if (m_shape.position.x + m_shape.radius > 1)
+		{
+			m_shape.position.x = 1 - m_shape.radius;
+			m_velocity.x = -m_velocity.x;
+		}
+		else if (m_shape.position.x - m_shape.radius < -1)
+		{
+			m_shape.position.x = m_shape.radius - 1;
+			m_velocity.x = -m_velocity.x;
+		}
+
+		if (m_shape.position.y + m_shape.radius > 1)
+		{
+			m_shape.position.y = 1 - m_shape.radius;
+			m_velocity.y = -m_velocity.y;
+		}
+		else if (m_shape.position.y - m_shape.radius < -1)
+		{
+			m_shape.position.y = m_shape.radius - 1;
+			m_velocity.y = -m_velocity.y;
+		}
 	}
 
 	void Ball::draw(sf::RenderTarget& target)

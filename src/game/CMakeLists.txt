@@ -2,6 +2,8 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set(
 	game_sources
+		${SRC_DIR}/Bustout.h
+		${SRC_DIR}/Bustout.cpp
 		${SRC_DIR}/Shapes.h
 		${SRC_DIR}/Ball.h
 		${SRC_DIR}/Ball.cpp

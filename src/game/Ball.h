@@ -11,7 +11,7 @@ namespace bustout
 	{
 	public:
 		Ball(
-			  float radius = 10.0f
+			  float radius = 0.02f
 			, const sf::Vector2f& initialPosition = {}
 			, const sf::Vector2f& initialVelocity = {}
 		);
@@ -23,10 +23,11 @@ namespace bustout
 		void setVelocity(const sf::Vector2f& velocity) noexcept;
 
 		const sf::Vector2f& getPosition() const noexcept { return m_shape.position; }
+		const sf::Vector2f& getPrevPosition() const noexcept { return m_prevPosition; }
 		const sf::Vector2f& getVelocity() const noexcept { return m_velocity; }
 		const Circle& getShape() const noexcept { return m_shape; }
 
-		void update(float elapsedTime);
+		void update(float elapsedTime) noexcept;
 
 		void draw(sf::RenderTarget& target);
 
@@ -34,5 +35,6 @@ namespace bustout
 		Sprite m_sprite;
 		Circle m_shape;
 		sf::Vector2f m_velocity;
+		sf::Vector2f m_prevPosition;
 	};
 }

@@ -17,29 +17,29 @@ namespace bustout
 		m_extent = { (float)screenWidth, (float)screenHeight };
 	}
 
-	void Canvas::onClick() noexcept
-	{
-		const sf::Vector2i mousePos = sf::Mouse::getPosition();
-		const sf::Vector2f relativePos = sf::Vector2f{ (float)mousePos.x, (float)mousePos.y } - getGlobalPosition();
-		for (auto& elem : m_elements)
-		{
-			const auto rect = sf::FloatRect{
-				elem->getLocalPosition().x,
-				elem->getLocalPosition().y,
-				elem->getExtent().x,
-				elem->getExtent().y,
-			};
+	//void Canvas::onClick() noexcept
+	//{
+	//	const sf::Vector2i mousePos = sf::Mouse::getPosition();
+	//	const sf::Vector2f relativePos = sf::Vector2f{ (float)mousePos.x, (float)mousePos.y } - getGlobalPosition();
+	//	for (auto& elem : m_elements)
+	//	{
+	//		const auto rect = sf::FloatRect{
+	//			elem->getLocalPosition().x,
+	//			elem->getLocalPosition().y,
+	//			elem->getExtent().x,
+	//			elem->getExtent().y,
+	//		};
 
-			if (pointInRect(relativePos, rect))
-				elem->onClick();
-		}
-	}
+	//		if (pointInRect(relativePos, rect))
+	//			elem->onClick();
+	//	}
+	//}
 
-	void Canvas::onRelease() noexcept
-	{
-		for (auto& elem : m_elements)
-			elem->onRelease();
-	}
+	//void Canvas::onRelease() noexcept
+	//{
+	//	for (auto& elem : m_elements)
+	//		elem->onRelease();
+	//}
 
 	void Canvas::update(sf::Window& window)
 	{

@@ -14,6 +14,7 @@ namespace bustout
 		: m_beamSprite("paddle_beam.png")
 		, m_endSprite("paddle_end.png")
 		, m_shape({ initialPosition, 0.075f, 0.02f })
+		, m_prevPosition(initialPosition)
 	{
 #ifdef BUSTOUT_DEBUG
 		DebugRenderer::get().registerObject(m_shape);
@@ -37,8 +38,9 @@ namespace bustout
 #endif
 	}
 
-	void Paddle::update(float elapsedTime)
+	void Paddle::update(float elapsedTime) noexcept
 	{
+		m_prevPosition = m_shape.position;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Left))
 			m_shape.position.x -= m_speed * elapsedTime;
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Right))

@@ -106,4 +106,10 @@ namespace bustout
 	{
 		return v * (1 / length(v));
 	}
+
+	// reflect v across the n - n should be normalised
+	inline sf::Vector2f reflect(const sf::Vector2f& v, const sf::Vector2f& n) noexcept
+	{
+		return v - 2 * dot(n, v) * n;
+	}
 }
