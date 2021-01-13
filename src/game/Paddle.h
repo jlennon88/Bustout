@@ -35,7 +35,7 @@ namespace bustout
 		Sprite m_endSprite;
 
 		Capsule m_shape;
-		float m_speed = 0.7f;
+		float m_speed = 1.0f;
 		sf::Vector2f m_prevPosition;
 		Rectangle m_aabb;
 	};

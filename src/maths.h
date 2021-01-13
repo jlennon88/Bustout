@@ -4,9 +4,12 @@
 #include <SFML/System.hpp>
 #pragma warning(pop)
 
+#include <limits>
+
 namespace bustout
 {
 	constexpr float PI = 3.14159265359f;
+	constexpr float Epsilon = 1 / static_cast<float>(std::numeric_limits<uint16_t>::max());
 
 	constexpr float to_radians(float theta) noexcept { return theta * (PI / 180.0f); }
 	constexpr float to_degrees(float theta) noexcept { return theta * (180.0f / PI); }
@@ -75,7 +78,7 @@ namespace bustout
 	}
 
 	// 'cross-product' between out-of-plane vector and in-plane vector
-	inline const sf::Vector2f& cross(float z, const sf::Vector2f& xy) noexcept
+	inline sf::Vector2f cross(float z, const sf::Vector2f& xy) noexcept
 	{
 		return { -z * xy.y, z * xy.x };
 	}
@@ -112,4 +115,8 @@ namespace bustout
 	{
 		return v - 2 * dot(n, v) * n;
 	}
+
+	constexpr bool isApprox(float x, float y) { return abs(x - y) < Epsilon; }
+
+	constexpr bool isZero(float x) { return abs(x) < Epsilon; }
 }

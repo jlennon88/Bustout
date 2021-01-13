@@ -41,14 +41,23 @@ namespace bustout
 
 		sf::Vector2f getGridCentre() const noexcept;
 
-		const Rectangle& getAABB() const noexcept;
+		const Rectangle& getAABB() const noexcept { return m_aabb; }
 
+		// returns true if a block lost health
 		bool handleCollision(Ball& ball) noexcept;
 
 		void draw(sf::RenderTarget& target);
+		
+		Rectangle getBlock(int x, int y) const noexcept;
+
+		int getRemainingBlocks() const noexcept { return m_remainingBlocks; }
 	private:
+		std::pair<int, int> getPointCoords(const sf::Vector2f& point) const noexcept;
+
 		int m_xCount;
 		int m_yCount;
+
+		int m_remainingBlocks;
 
 		float m_blockWidth = 0.15f;
 		float m_blockHeight = 0.05f;

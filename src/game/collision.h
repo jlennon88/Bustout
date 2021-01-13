@@ -17,9 +17,14 @@ namespace bustout
 		, const Capsule& capsule
 	) noexcept;
 
-	bool testCollision_CircleRect(
+	std::optional<sf::Vector2f> testCollision_CircleRect(
 		  const Circle & circle
 		, const Rectangle & rect
+	) noexcept;
+
+	bool testCollision_PointRect(
+		  const sf::Vector2f& point
+		, const Rectangle& rect
 	) noexcept;
 
 	bool testCollision_CapsuleRect(
@@ -30,6 +35,11 @@ namespace bustout
 	bool testCollision_RectRect(
 		  const Rectangle& rectA
 		, const Rectangle& rectB
+	) noexcept;
+
+	bool testCollision_LineLine(
+		  const Line& lineA
+		, const Line& lineB
 	) noexcept;
 
 	Rectangle calculateAABB(const Circle& circle);

@@ -1,6 +1,7 @@
 #include "DebugDraw.h"
 
 #include "maths.h"
+#include "game/collision.h"
 
 namespace bustout
 {
@@ -159,4 +160,54 @@ namespace bustout
 	template void DebugRenderer::removeObject(const Circle& object);
 	template void DebugRenderer::removeObject(const Capsule& object);
 	template void DebugRenderer::removeObject(const Rectangle& object);
+
+	void drawLine(sf::RenderTarget& target, const Line& line, const sf::Color& colour)
+	{
+		sf::VertexArray vertices(sf::PrimitiveType::Lines, 2);
+		vertices[0] = { line.p0, colour, {} };
+		vertices[1] = { line.p1, colour, {} };
+
+		target.draw(vertices);
+	}
+
+	void debugCircleRectCollision(sf::RenderTarget& target, const bustout::Circle& circle, const bustout::Rectangle& rect)
+	{
+		const auto collisionData = bustout::testCollision_CircleRect(circle, rect);
+		if (collisionData.has_value())
+		{
+			const auto blockMid = rect.topLeft + sf::Vector2f{ 0.5f * rect.widthHeight.x, -0.5f * rect.widthHeight.y };
+			const bustout::Line mouseToBlock = { circle.position, blockMid };
+			sf::CircleShape blockMidDot;
+			blockMidDot.setPosition(blockMid);
+			blockMidDot.setFillColor(sf::Color::Green);
+			blockMidDot.setRadius(0.01f);
+			blockMidDot.setOrigin(0.01f, 0.01f);
+			target.draw(blockMidDot);
+			bustout::drawLine(target, mouseToBlock, sf::Color::Magenta);
+			for (const auto edge : bustout::getEdges(rect))
+			{
+				if (testCollision_LineLine(mouseToBlock, edge))
+				{
+					const auto normal = bustout::normalise(bustout::cross(1.0f, edge.p1 - edge.p0));
+					const auto edgeMidPoint = 0.5f * (edge.p0 + edge.p1);
+					const auto circleToEdgeDist = bustout::abs(bustout::dot(normal, circle.position - edgeMidPoint));
+					const auto boxToEdgeDist = bustout::abs(bustout::dot(normal, edgeMidPoint - blockMid));
+					const auto radSum = circle.radius + 0.5f * bustout::abs(bustout::dot(normal, rect.widthHeight));
+					const auto delta = bustout::clamp_ge_zero(radSum - (boxToEdgeDist + circleToEdgeDist));
+					bustout::drawLine(target, { edgeMidPoint, edgeMidPoint + 0.03f * normal }, sf::Color::Red);
+					bustout::drawLine(target, edge, sf::Color::Red);
+				}
+				else
+					bustout::drawLine(target, edge, sf::Color::Cyan);
+			}
+
+			const float colDotRad = 0.01f;
+			sf::CircleShape colDot;
+			colDot.setRadius(colDotRad);
+			colDot.setPosition(collisionData.value());
+			colDot.setOrigin(colDotRad, colDotRad);
+			colDot.setFillColor(sf::Color::Red);
+			target.draw(colDot);
+		}
+	}
 }

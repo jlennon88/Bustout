@@ -9,6 +9,8 @@ namespace bustout
 		: m_paddle({ 0.0f, -0.8f })
 		, m_blockGrid(10, 10)
 	{
+		m_killzone.topLeft = { -1.0f, -1.0f };
+		m_killzone.widthHeight = { 2.0f, 0.2f };
 	}
 
 	void Bustout::update(float elapsedTime) noexcept
@@ -39,7 +41,14 @@ namespace bustout
 				}
 				else
 				{
-					m_blockGrid.handleCollision(m_ball);
+					if (m_blockGrid.handleCollision(m_ball))
+					{
+						m_score += m_scoreIncrement;
+						if (m_blockGrid.getRemainingBlocks() == 0)
+						{
+							// TODO: implement 'game won'
+						}
+					}
 				}
 			}
 			else
@@ -60,6 +69,14 @@ namespace bustout
 	}
 	void Bustout::draw(sf::RenderTarget& target)
 	{
+		auto killzoneColour = sf::Color::Red;
+		killzoneColour.a = 255 / 2;
+		sf::RectangleShape killzoneGfx;
+		killzoneGfx.setFillColor(killzoneColour);
+		killzoneGfx.setPosition(m_killzone.topLeft);
+		killzoneGfx.setSize(m_killzone.widthHeight);
+		target.draw(killzoneGfx);
+
 		m_blockGrid.draw(target);
 		m_paddle.draw(target);
 		m_ball.draw(target);

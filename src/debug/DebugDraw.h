@@ -38,4 +38,7 @@ namespace bustout
 
 		ObjectCollectionSet m_objects{};
 	};
+
+	void drawLine(sf::RenderTarget& target, const Line& line, const sf::Color& colour = sf::Color::Blue);
+	void debugCircleRectCollision(sf::RenderTarget& target, const Circle& circle, const Rectangle& rect);
 }

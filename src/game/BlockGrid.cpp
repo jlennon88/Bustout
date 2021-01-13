@@ -3,6 +3,7 @@
 #include "maths.h"
 #include "collision.h"
 
+#include <array>
 #include <cassert>
 #include <stdexcept>
 
@@ -26,6 +27,12 @@ namespace bustout
 		std::generate(std::begin(m_blocks), std::end(m_blocks), []() 
 			{
 				return rand() % 5 - 1;
+			}
+		);
+
+		m_remainingBlocks = (int)std::count_if(std::begin(m_blocks), std::end(m_blocks), [](int hp)
+			{
+				return hp > 0;
 			}
 		);
 
@@ -82,6 +89,12 @@ namespace bustout
 		assert(y >= 0 && y < m_yCount);
 
 		const int idx = x + y * m_xCount;
+
+		if (health > 0 && m_blocks[idx] <= 0)
+			++m_remainingBlocks;
+		else if (health <= 0 && m_blocks[idx] > 0)
+			--m_remainingBlocks;
+
 		m_blocks[idx] = health;
 	}
 
@@ -130,7 +143,106 @@ namespace bustout
 
 		if (testCollision_RectRect(ballAABB, m_aabb))
 		{
-			return true;
+			int xCount = 2;
+			int yCount = 2;
+			auto [x0, y0] = getPointCoords(ballAABB.topLeft);
+
+			if (x0 < 0)
+			{
+				x0 = 0;
+				xCount /= 2;
+			}
+			else if (x0 + 1 >= m_xCount)
+			{
+				x0 = m_xCount - 1;
+				xCount /= 2;
+			}
+			if (y0 < 0)
+			{
+				y0 = 0;
+				yCount /= 2;
+			}
+			else if (y0 + 1 >= m_yCount)
+			{
+				y0 = m_yCount - 1;
+				yCount /= 2;
+			}
+			
+			int idx = x0 + y0 * m_xCount;
+			sf::Vector2f collisionNormal{};
+			int colIdx = idx;
+			bool didCollide = false;
+			for (int y = y0; y < y0 + yCount; ++y)
+			{
+				for (int x = x0; x < x0 + xCount; ++x)
+				{
+					if (m_blocks[idx] != 0)
+					{
+						// handle collision
+						Rectangle block = getBlock(x, y);
+						const auto collisionData = testCollision_CircleRect(ball.getShape(), block);
+						if (collisionData.has_value())
+						{
+							const auto blockMid = block.topLeft + sf::Vector2f{ 0.5f * block.widthHeight.x, -0.5f * block.widthHeight.y };
+							const bustout::Line mouseToBlock = { ball.getPosition(), blockMid };
+							for (const auto edge : getEdges(block))
+							{
+								if (testCollision_LineLine(mouseToBlock, edge))
+								{
+									const auto normal = bustout::normalise(bustout::cross(1.0f, edge.p1 - edge.p0));
+									const auto edgeMidPoint = 0.5f * (edge.p0 + edge.p1);
+									const auto ballToEdgeDist = bustout::abs(bustout::dot(normal, ball.getPosition() - edgeMidPoint));
+									const auto blockToEdgeDist = bustout::abs(bustout::dot(normal, edgeMidPoint - blockMid));
+									const auto radSum = ball.getShape().radius + 0.5f * bustout::abs(bustout::dot(normal, block.widthHeight));
+									const auto delta = bustout::clamp_ge_zero(radSum - (blockToEdgeDist + ballToEdgeDist));
+									ball.setPosition(ball.getPosition() + delta * normal);
+									didCollide = true;
+									collisionNormal = normal;
+									colIdx = idx;
+								}
+							}
+						}
+						//if (collisionData.has_value())
+						//{
+						//	const auto blockMid = block.topLeft + 0.5f * block.widthHeight;
+						//	const auto ballToBlock = blockMid - ball.getPosition();
+						//	for (const auto edge : getEdges(block))
+						//	{
+						//		if (testCollision_LineLine({ ball.getPosition(), blockMid }, edge))
+						//		{
+						//			const auto normal = normalise(cross(1.0f, edge.p1 - edge.p0));
+						//			const auto dist = ball.getShape().radius + 0.5f * dot(normal, block.widthHeight) - dot(normal, ballToBlock);
+						//			if (dist > 0.0f)
+						//			{
+						//				// if this is the right edge, then move the ball along the normal of the edge
+						//				// until it is only touching the block
+						//				didCollide = true;
+						//				collisionNormal = normal;
+						//				colIdx = idx;
+						//				const auto disp = dist * normal;
+						//				ball.setPosition(disp + ball.getPosition());
+						//			}
+						//		}
+						//	}
+						//}
+					}
+					++idx;
+				}
+				idx += m_xCount - xCount;
+			}
+
+			if (didCollide)
+			{
+				ball.setVelocity(reflect(ball.getVelocity(), collisionNormal));
+				if (m_blocks[colIdx] > 0)
+				{
+					if (--m_blocks[colIdx] == 0)
+					{
+						--m_remainingBlocks;
+						return true;
+					}
+				}
+			}
 		}
 		return false;
 	}
@@ -139,7 +251,7 @@ namespace bustout
 	{
 		size_t idx = 0;
 
-		const sf::Vector2f initPos = { -m_blockWidth * (-0.5f + m_xCount / 2.0f), -m_blockHeight * (-0.5f + m_yCount / 2.0f) };
+		const sf::Vector2f initPos = { -m_blockWidth * (-0.5f + m_xCount / 2.0f), m_blockHeight * (-0.5f + m_yCount / 2.0f) };
 		sf::Vector2f blockPosition = initPos;
 		for (int y = 0; y < m_yCount; ++y)
 		{
@@ -171,7 +283,27 @@ namespace bustout
 				m_blockSprite.draw(target, blockPosition);
 				blockPosition.x += m_blockWidth;
 			}
-			blockPosition.y += m_blockHeight;
+			blockPosition.y -= m_blockHeight;
 		}
+	}
+
+	Rectangle BlockGrid::getBlock(int x, int y) const noexcept
+	{
+		assert(x >= 0);
+		assert(y >= 0);
+		assert(x < m_xCount);
+		assert(y < m_yCount);
+
+		Rectangle rect;
+		rect.topLeft = { m_aabb.topLeft.x + x * m_blockWidth, m_aabb.topLeft.y - y * m_blockHeight };
+		rect.widthHeight = { m_blockWidth, m_blockHeight };
+		return rect;
+	}
+
+	std::pair<int, int> BlockGrid::getPointCoords(const sf::Vector2f& point) const noexcept
+	{
+		int x = static_cast<int>((point.x - m_aabb.topLeft.x) / m_blockWidth);
+		int y = static_cast<int>((m_aabb.topLeft.y - point.y) / m_blockHeight);
+		return { x, y };
 	}
 }

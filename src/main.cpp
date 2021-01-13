@@ -29,6 +29,17 @@ int main()
 
 	const sf::Color clearColor = { 0x55, 0x55, 0x55, 0xFF };
 
+	bustout::Rectangle rect;
+	rect.topLeft = { -0.9f, 0.9f };
+	rect.widthHeight = { 0.1f, 0.1f };
+
+	const float mouseCircleRad = 0.05f;
+	bustout::Circle mouseCircle;
+	mouseCircle.radius = mouseCircleRad;
+	
+	bustout::DebugRenderer::get().registerObject(rect);
+	bustout::DebugRenderer::get().registerObject(mouseCircle);
+
 	bustout::Bustout gameInstance;
 
 	sf::Clock clock;
@@ -45,31 +56,42 @@ int main()
 		}
 
 		window.clear(clearColor);
-
 		// update scene
 		gameInstance.update(elapsedTime);
 
 		// draw scene
 		window.setView(worldView);
 
+
 		gameInstance.draw(window);
 
-
+		// some debug-specific tests
 #ifdef BUSTOUT_DEBUG
+		const auto mousePosi = sf::Mouse::getPosition(window);
+		const sf::Vector2f mousePosf = { (float)(mousePosi.x - MainWindowWidth / 2), (float)(mousePosi.y - MainWindowHeight / 2) };
+		const sf::Vector2f mousePosScaled = { mousePosf.x * 2 / (float)MainWindowWidth, -mousePosf.y * 2 / (float)MainWindowHeight };
+
+		mouseCircle.position = mousePosScaled;
+		sf::CircleShape mouseDot;
+		mouseDot.setPosition(mousePosScaled);
+		mouseDot.setFillColor(sf::Color::White);
+		mouseDot.setRadius(mouseCircleRad);
+		mouseDot.setOrigin(mouseCircleRad, mouseCircleRad);
+		window.draw(mouseDot);
+
 		bustout::DebugRenderer::get().draw(window);
+		bustout::debugCircleRectCollision(window, mouseCircle, rect);
 #endif
 
 		// draw ui
 		window.setView(uiView);
 
-		const auto mousePosi = sf::Mouse::getPosition(window);
-		const sf::Vector2f mousePosf = { (float)mousePosi.x, (float)mousePosi.y };
-		sf::CircleShape mouseDot;
-		mouseDot.setPosition(mousePosf);
-		mouseDot.setFillColor(sf::Color::White);
-		mouseDot.setRadius(3.0f);
-		mouseDot.setOrigin(1.5f, 1.5f);
-		window.draw(mouseDot);
+		//sf::CircleShape mouseDot;
+		//mouseDot.setPosition(mousePosf);
+		//mouseDot.setFillColor(sf::Color::White);
+		//mouseDot.setRadius(10.0f);
+		//mouseDot.setOrigin(1.5f, 1.5f);
+		//window.draw(mouseDot);
 
 		window.display();
 	}
