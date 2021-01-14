@@ -15,6 +15,7 @@ namespace bustout
 
 	void Bustout::update(float elapsedTime) noexcept
 	{
+		// TODO: might make this depend on the ball speed, to prevent it from passing through objects at higher speeds
 		constexpr int UpdateIterations = 8;
 		static_assert(UpdateIterations > 0);
 		const float subElapedTime = elapsedTime / static_cast<float>(UpdateIterations);
@@ -25,6 +26,10 @@ namespace bustout
 			if (!m_ballFixed)
 			{
 				m_ball.update(subElapedTime);
+
+				// the following assumes that the ball can't interact with the paddle, killzone
+				// and block grid on the same iteration, so it depends on the speed of the ball
+
 				if (testCollision_RectRect(m_ball.getAABB(), m_paddle.getAABB()))
 				{
 					auto collisionData = testCollision_CircleCapsule(m_ball.getShape(), m_paddle.getShape());
@@ -47,8 +52,9 @@ namespace bustout
 						// TODO: implement 'game won'
 					}
 				}
-				else if (m_ball.getPosition().y - m_ball.getShape().radius < m_killzone.topLeft.y + m_killzone.widthHeight.y)
+				else if (m_ball.getPosition().y < m_killzone.topLeft.y + m_killzone.widthHeight.y)
 				{
+					// if the ball is below the top of the killzone, then lose a life
 					--m_lives;
 					m_ballFixed = true;
 					if (m_lives == 0)
@@ -61,12 +67,15 @@ namespace bustout
 			{
 				if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 				{
+					// release the ball and add the velocity direction of the paddle to give some
+					// control over the initial trajectory
 					const sf::Vector2f paddleVelocity = (m_paddle.getPosition() - m_paddle.getPrevPosition()) / subElapedTime;
 					m_ball.setVelocity(normalise(sf::Vector2f(1, 1) + paddleVelocity) * m_ballSpeed);
 					m_ballFixed = false;
 				}
 				else
 				{
+					// ball is 'stuck' to the paddle by a simple offset
 					const auto ballPosition = m_paddle.getPosition() + sf::Vector2f(0.0f, m_paddle.getShape().radius + m_ball.getShape().radius);
 					m_ball.setPosition(ballPosition);
 				}

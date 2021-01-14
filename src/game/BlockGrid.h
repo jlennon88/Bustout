@@ -46,6 +46,7 @@ namespace bustout
 
 		sf::Vector2f getGridCentre() const noexcept;
 
+		// boundary of the whole grid
 		const Rectangle& getAABB() const noexcept { return m_aabb; }
 
 		// returns true if a block lost health
@@ -55,6 +56,7 @@ namespace bustout
 		
 		Rectangle getBlock(int x, int y) const noexcept;
 
+		// returns the remaining number of destructable blocks
 		int getRemainingBlocks() const noexcept { return m_remainingBlocks; }
 	private:
 		std::pair<int, int> getPointCoords(const sf::Vector2f& point) const noexcept;

@@ -147,8 +147,15 @@ namespace bustout
 	{
 		const auto ballAABB = ball.getAABB();
 
+		// test whether the ball is within the boundary of the whole grid
+		// a 'broadphase-type' check
 		if (testCollision_RectRect(ballAABB, m_aabb))
 		{
+			// at most, only 4 blocks are checked, but this assumes
+			// the ball radius is smaller then the block dimensions
+
+			// TODO: modify the max x/y counts to take account of the ball radius
+
 			int xCount = 2;
 			int yCount = 2;
 			auto [x0, y0] = getPointCoords(ballAABB.topLeft);
@@ -172,26 +179,41 @@ namespace bustout
 			{
 				for (int x = x0; x < x0 + xCount; ++x)
 				{
-					// ignore empty spaces defined by 0
+					// ignore empty spaces defined by health = 0
 					if (m_blocks[idx] != 0)
 					{
 						Rectangle block = getBlock(x, y);
+						// test ball-block intersection
 						const auto collisionData = testCollision_CircleRect(ball.getShape(), block);
 						if (collisionData.has_value())
 						{
 							const auto blockMid = block.topLeft + sf::Vector2f{ 0.5f * block.widthHeight.x, -0.5f * block.widthHeight.y };
 							const bustout::Line mouseToBlock = { ball.getPosition(), blockMid };
+							// find the edge that the ball has hit
+							// - identified by the one that intersects with the line segment
+							//	 between the centre of the ball and the centre of the block
+							// TODO: write a test for edge cases
 							for (const auto edge : getEdges(block))
 							{
 								if (testCollision_LineLine(mouseToBlock, edge))
 								{
+									// move the ball along the normal so that it is just touching the block
+									// - could have more sophisticated code that moves back along the velocity vector,
+									//	 but this gives visually plausible results and it is simpler
+
 									const auto normal = bustout::normalise(bustout::cross(1.0f, edge.p1 - edge.p0));
 									const auto edgeMidPoint = 0.5f * (edge.p0 + edge.p1);
 									const auto ballToEdgeDist = bustout::abs(bustout::dot(normal, ball.getPosition() - edgeMidPoint));
 									const auto blockToEdgeDist = bustout::abs(bustout::dot(normal, edgeMidPoint - blockMid));
 									const auto radSum = ball.getShape().radius + 0.5f * bustout::abs(bustout::dot(normal, block.widthHeight));
 									const auto delta = bustout::clamp_ge_zero(radSum - (blockToEdgeDist + ballToEdgeDist));
+
 									ball.setPosition(ball.getPosition() + delta * normal);
+
+									// these values get overriden by the latest block to be hit, since usually the ball
+									// would have hit one first
+									// TODO: test this works for edge cases like directly hitting an inside corner
+									// formed by two or three blocks
 									didCollide = true;
 									collisionNormal = normal;
 									colIdx = idx;
@@ -207,6 +229,7 @@ namespace bustout
 			if (didCollide)
 			{
 				ball.setVelocity(reflect(ball.getVelocity(), collisionNormal));
+				// if the block hit is destructable, reduce its health
 				if (m_blocks[colIdx] > 0)
 				{
 					if (--m_blocks[colIdx] == 0)
