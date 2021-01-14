@@ -10,7 +10,7 @@ namespace bustout
 		, m_blockGrid(10, 10)
 	{
 		m_killzone.topLeft = { -1.0f, -1.0f };
-		m_killzone.widthHeight = { 2.0f, 0.2f };
+		m_killzone.widthHeight = { 2.0f, 0.1f };
 	}
 
 	void Bustout::update(float elapsedTime) noexcept
@@ -29,8 +29,18 @@ namespace bustout
 
 				// the following assumes that the ball can't interact with the paddle, killzone
 				// and block grid on the same iteration, so it depends on the speed of the ball
-
-				if (testCollision_RectRect(m_ball.getAABB(), m_paddle.getAABB()))
+				
+				if (m_ball.getPosition().y < m_killzone.topLeft.y + m_killzone.widthHeight.y)
+				{
+					// if the ball is below the top of the killzone, then lose a life
+					--m_lives;
+					m_ballFixed = true;
+					if (m_lives == 0)
+					{
+						// TODO: implement 'game over'
+					}
+				}
+				else if (testCollision_RectRect(m_ball.getAABB(), m_paddle.getAABB()))
 				{
 					auto collisionData = testCollision_CircleCapsule(m_ball.getShape(), m_paddle.getShape());
 					if (collisionData.has_value())
@@ -50,16 +60,6 @@ namespace bustout
 					if (m_blockGrid.getRemainingBlocks() == 0)
 					{
 						// TODO: implement 'game won'
-					}
-				}
-				else if (m_ball.getPosition().y < m_killzone.topLeft.y + m_killzone.widthHeight.y)
-				{
-					// if the ball is below the top of the killzone, then lose a life
-					--m_lives;
-					m_ballFixed = true;
-					if (m_lives == 0)
-					{
-						// TODO: implement 'game over'
 					}
 				}
 			}
